@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>Тіркелу</title>
+  <meta name="theme-color" content="#2d2568">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="icon" href="img/icon-512.png" type="image/png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="signup" data-title-key="signUpPageTitle" data-back-target="homepage.html">
+  <div class="page-shell">
+    <header class="app-header">
+      <div class="brand-side">
+        <button class="icon-button back-button" type="button" data-action="back" aria-label="Back">
+          <span class="icon-arrow" aria-hidden="true"></span>
+        </button>
+        <a class="brand-mark" href="homepage.html" aria-label="FAKE U home">
+          <img src="img/onay1.jpg" alt="FAKE U logo">
+        </a>
+        <a class="brand-name" href="homepage.html">FAKE U</a>
+      </div>
+
+      <div class="header-actions">
+        <a class="icon-button" href="plus.html" aria-label="Open more">
+          <span class="icon-plus" aria-hidden="true"></span>
+        </a>
+        <button class="wallet-pill" type="button" data-action="wallet" aria-label="Wallet balance">
+          <span class="icon-wallet" aria-hidden="true"></span>
+          <span data-balance>0 ₸</span>
+        </button>
+        <button class="icon-button account-trigger" type="button" data-action="account" aria-label="Open account">
+          <span class="icon-user" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="lang-toolbar">
+        <section class="lang-switch" aria-label="Language switcher">
+          <button class="lang-option is-active" type="button" data-lang="kk" data-i18n="langKk">Қазақша</button>
+          <button class="lang-option" type="button" data-lang="ru" data-i18n="langRu">Русский</button>
+        </section>
+        <button class="fullscreen-toggle" type="button" data-action="fullscreen">
+          <span class="icon-fullscreen" aria-hidden="true"></span>
+          <span data-i18n="fullscreenButton">Full screen</span>
+        </button>
+      </div>
+
+      <a class="inline-back inline-back--top" href="homepage.html" data-i18n="backLabel">← Артқа</a>
+
+      <section class="auth-card">
+        <h1 class="page-title page-title--compact" data-i18n="signUpHeading">Тіркелу</h1>
+        <p class="page-subtitle" data-i18n="signUpText">Баланс пен билет тарихы аккаунтыңызға байланып сақталады</p>
+
+        <div class="auth-switch">
+          <a class="auth-switch__item" href="signin.html" data-i18n="signInTab">Кіру</a>
+          <a class="auth-switch__item auth-switch__item--active" href="signup.html" data-i18n="signUpTab">Тіркелу</a>
+        </div>
+
+        <form class="app-form" id="signupForm">
+          <div>
+            <label class="field-label" for="signupName" data-i18n="nameField">Аккаунт атауы</label>
+            <input class="text-input" id="signupName" name="name" type="text" required data-i18n-placeholder="namePlaceholder" placeholder="Мысалы, Name">
+          </div>
+
+          <div>
+            <label class="field-label" for="signupEmail" data-i18n="emailField">Email</label>
+            <input class="text-input" id="signupEmail" name="email" type="email" required data-i18n-placeholder="emailPlaceholder" placeholder="email@example.com">
+          </div>
+
+          <div>
+            <label class="field-label" for="signupPassword" data-i18n="passwordField">Құпиясөз</label>
+            <input class="text-input" id="signupPassword" name="password" type="password" minlength="6" required data-i18n-placeholder="passwordPlaceholder" placeholder="Кемі 6 таңба">
+          </div>
+
+          <div>
+            <label class="field-label" for="signupPasswordConfirm" data-i18n="confirmPasswordField">Құпиясөзді қайталау</label>
+            <input class="text-input" id="signupPasswordConfirm" name="password_confirm" type="password" minlength="6" required data-i18n-placeholder="confirmPasswordPlaceholder" placeholder="Құпиясөзді қайта енгізіңіз">
+          </div>
+
+          <button class="primary-button" type="submit" data-i18n="signUpAction">Тіркелу</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <div class="account-panel" id="accountPanel" hidden>
+    <div class="account-card">
+      <div class="account-card__header">
+        <h2 data-i18n="accountTitle">Аккаунт туралы мәлімет</h2>
+        <p data-i18n="accountText">Бұл жерде аккаунт туралы негізгі ақпарат көрсетіледі</p>
+      </div>
+
+      <dl class="account-grid">
+        <div>
+          <dt data-i18n="accountNameLabel">Атау</dt>
+          <dd data-account-name>Қонақ</dd>
+        </div>
+        <div>
+          <dt data-i18n="accountEmailLabel">Email</dt>
+          <dd data-account-email>-</dd>
+        </div>
+        <div>
+          <dt data-i18n="accountRoleLabel">Мәртебе</dt>
+          <dd data-account-role>Қонақ режимі</dd>
+        </div>
+        <div>
+          <dt data-i18n="accountBalanceLabel">Баланс</dt>
+          <dd data-account-balance>0 ₸</dd>
+        </div>
+      </dl>
+
+      <div class="account-actions">
+        <a class="secondary-button secondary-button--dark" href="admin.html" data-admin-link data-i18n="adminButton" hidden>Admin панель</a>
+        <a class="secondary-button" href="signup.html" data-auth-link="signup" data-i18n="signUpTab">Тіркелу</a>
+        <a class="secondary-button" href="signin.html" data-auth-link="signin" data-i18n="signInTab">Кіру</a>
+        <button class="secondary-button secondary-button--ghost" type="button" data-action="logout" data-i18n="logoutButton">Шығу</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/app.js"></script>
+</body>
+</html>
