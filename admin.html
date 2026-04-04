@@ -5,11 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <title>Admin</title>
   <meta name="theme-color" content="#2d2568">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FAKE U">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="site.webmanifest">
   <link rel="icon" href="img/onay1.jpg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="admin" data-title-key="adminPageTitle" data-back-target="homepage.html">
@@ -26,11 +31,8 @@
       </div>
 
       <div class="header-actions">
-        <a class="icon-button" href="plus.html" aria-label="Open more">
-          <span class="icon-plus" aria-hidden="true"></span>
-        </a>
         <button class="wallet-pill" type="button" data-action="wallet" aria-label="Wallet balance">
-          <span class="icon-wallet" aria-hidden="true"></span>
+          <span class="icon-plus" aria-hidden="true"></span>
           <span data-balance>0 ₸</span>
         </button>
         <button class="icon-button account-trigger" type="button" data-action="account" aria-label="Open account">
@@ -66,11 +68,15 @@
             <span data-i18n="adminLookupHeading">Балансты тексеру</span>
           </summary>
           <div class="admin-accordion__body">
-            <p class="admin-helper-text" data-i18n="adminLookupText">Қолданушының email арқылы ағымдағы балансын тексеріңіз.</p>
+            <p class="admin-helper-text" data-i18n="adminLookupText">Қолданушыны email немесе аккаунт атауы арқылы табыңыз.</p>
             <form class="app-form" id="adminLookupForm">
-              <div>
-                <label class="field-label" for="adminLookupEmail" data-i18n="targetEmailLabel">Қолданушы email</label>
-                <input class="text-input" id="adminLookupEmail" name="target_email" type="email" required data-i18n-placeholder="targetEmailPlaceholder" placeholder="user@example.com">
+              <div class="admin-search-field">
+                <label class="field-label" for="adminLookupEmail" data-i18n="targetEmailLabel">Қолданушыны табу</label>
+                <div class="admin-search-input-wrap">
+                  <span class="icon-search" aria-hidden="true"></span>
+                  <input class="text-input text-input--search" id="adminLookupEmail" name="target_email" type="text" required autocomplete="off" data-admin-user-search data-i18n-placeholder="targetEmailPlaceholder" placeholder="Email немесе аккаунт атауы">
+                </div>
+                <div class="admin-search-results" hidden></div>
               </div>
               <button class="secondary-button secondary-button--dark" type="submit" data-i18n="adminLookupButton">Балансты тексеру</button>
             </form>
@@ -82,11 +88,15 @@
             <span data-i18n="adminResultTitle">Жаңартылған аккаунт</span>
           </summary>
           <div class="admin-accordion__body">
-            <p class="admin-helper-text">Email арқылы баланс өзгертіңіз.</p>
+            <p class="admin-helper-text" data-i18n="adminBalanceText">Қолданушыны тауып, балансын жаңартыңыз.</p>
             <form class="app-form" id="adminBalanceForm">
-              <div>
-                <label class="field-label" for="adminTargetEmail" data-i18n="targetEmailLabel">Қолданушы email</label>
-                <input class="text-input" id="adminTargetEmail" name="target_email" type="email" required data-i18n-placeholder="targetEmailPlaceholder" placeholder="user@example.com">
+              <div class="admin-search-field">
+                <label class="field-label" for="adminTargetEmail" data-i18n="targetEmailLabel">Қолданушыны табу</label>
+                <div class="admin-search-input-wrap">
+                  <span class="icon-search" aria-hidden="true"></span>
+                  <input class="text-input text-input--search" id="adminTargetEmail" name="target_email" type="text" required autocomplete="off" data-admin-user-search data-i18n-placeholder="targetEmailPlaceholder" placeholder="Email немесе аккаунт атауы">
+                </div>
+                <div class="admin-search-results" hidden></div>
               </div>
               <div>
                 <label class="field-label" for="adminNewBalance" data-i18n="balanceAmountLabel">Жаңа баланс</label>
@@ -97,34 +107,89 @@
           </div>
         </details>
 
-        <details class="placeholder-card admin-accordion">
+        <details class="placeholder-card admin-accordion" open>
           <summary class="admin-accordion__summary">
-            <span data-i18n="adminDiscountHeading">90% жеңілдік беру</span>
+            <span data-i18n="adminAdjustHeading">Балансты қосу/азайту</span>
           </summary>
           <div class="admin-accordion__body">
-            <p class="admin-helper-text" data-i18n="adminDiscountText">Бұл аккаунт әр 100 ₸ билетке тек 10 ₸ төлейді.</p>
-            <form class="app-form" id="adminDiscountForm">
-              <div>
-                <label class="field-label" for="adminDiscountEmail" data-i18n="targetEmailLabel">Қолданушы email</label>
-                <input class="text-input" id="adminDiscountEmail" name="target_email" type="email" required data-i18n-placeholder="targetEmailPlaceholder" placeholder="user@example.com">
+            <p class="admin-helper-text" data-i18n="adminAdjustText">Қолданушының балансына тек сома қосыңыз немесе азайтыңыз.</p>
+            <form class="app-form" id="adminAdjustForm">
+              <div class="admin-search-field">
+                <label class="field-label" for="adminAdjustEmail" data-i18n="targetEmailLabel">Қолданушыны табу</label>
+                <div class="admin-search-input-wrap">
+                  <span class="icon-search" aria-hidden="true"></span>
+                  <input class="text-input text-input--search" id="adminAdjustEmail" name="target_email" type="text" required autocomplete="off" data-admin-user-search data-i18n-placeholder="targetEmailPlaceholder" placeholder="Email немесе аккаунт атауы">
+                </div>
+                <div class="admin-search-results" hidden></div>
               </div>
-              <button class="primary-button" type="submit" data-i18n="adminDiscountButton">90% жеңілдік беру</button>
+              <div>
+                <label class="field-label" for="adminAdjustAction" data-i18n="adminAdjustModeLabel">Әрекет</label>
+                <select class="text-input admin-select" id="adminAdjustAction" name="adjust_mode" required>
+                  <option value="add" data-i18n="adminAdjustAdd">Қосу</option>
+                  <option value="subtract" data-i18n="adminAdjustSubtract">Азайту</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="adminAdjustAmount" data-i18n="adminAdjustAmountLabel">Сома</label>
+                <input class="text-input" id="adminAdjustAmount" name="adjust_amount" type="number" min="0.01" step="0.01" required data-i18n-placeholder="balanceAmountPlaceholder" placeholder="5000">
+              </div>
+              <button class="primary-button" type="submit" data-i18n="adminAdjustButton">Қолдану</button>
             </form>
           </div>
         </details>
 
         <details class="placeholder-card admin-accordion">
           <summary class="admin-accordion__summary">
-            <span data-i18n="adminDiscountResetHeading">Жеңілдікті қайтарып алу</span>
+            <span data-i18n="adminDiscountHeading">Жеңілдік беру</span>
           </summary>
           <div class="admin-accordion__body">
-            <p class="admin-helper-text" data-i18n="adminDiscountResetText">Бұл аккаунт қайтадан билетті толық бағамен алады.</p>
-            <form class="app-form" id="adminDiscountResetForm">
-              <div>
-                <label class="field-label" for="adminDiscountResetEmail" data-i18n="targetEmailLabel">Қолданушы email</label>
-                <input class="text-input" id="adminDiscountResetEmail" name="target_email" type="email" required data-i18n-placeholder="targetEmailPlaceholder" placeholder="user@example.com">
+            <p class="admin-helper-text" data-i18n="adminDiscountText">Қолданушыға 0%-100% аралығында билет жеңілдігін орнатыңыз.</p>
+            <form class="app-form" id="adminDiscountForm">
+              <div class="admin-search-field">
+                <label class="field-label" for="adminDiscountEmail" data-i18n="targetEmailLabel">Қолданушыны табу</label>
+                <div class="admin-search-input-wrap">
+                  <span class="icon-search" aria-hidden="true"></span>
+                  <input class="text-input text-input--search" id="adminDiscountEmail" name="target_email" type="text" required autocomplete="off" data-admin-user-search data-i18n-placeholder="targetEmailPlaceholder" placeholder="Email немесе аккаунт атауы">
+                </div>
+                <div class="admin-search-results" hidden></div>
               </div>
-              <button class="secondary-button secondary-button--dark" type="submit" data-i18n="adminDiscountResetButton">Жеңілдікті алып тастау</button>
+              <div>
+                <label class="field-label" for="adminDiscountPercent" data-i18n="discountRateLabel">Жеңілдік</label>
+                <select class="text-input admin-select" id="adminDiscountPercent" name="ticket_discount_percent" required>
+                  <option value="0">0%</option>
+                  <option value="10">10%</option>
+                  <option value="20">20%</option>
+                  <option value="30">30%</option>
+                  <option value="40">40%</option>
+                  <option value="50">50%</option>
+                  <option value="60">60%</option>
+                  <option value="70">70%</option>
+                  <option value="80">80%</option>
+                  <option value="90">90%</option>
+                  <option value="100">100%</option>
+                </select>
+              </div>
+              <button class="primary-button" type="submit" data-i18n="adminDiscountButton">Жеңілдікті сақтау</button>
+            </form>
+          </div>
+        </details>
+
+        <details class="placeholder-card admin-accordion">
+          <summary class="admin-accordion__summary">
+            <span data-i18n="adminRoleGrantHeading">Admin рөлін беру</span>
+          </summary>
+          <div class="admin-accordion__body">
+            <p class="admin-helper-text" data-i18n="adminRoleGrantText">Бұл аккаунтқа admin құралдарына қолжетімділік беріңіз.</p>
+            <form class="app-form" id="adminRoleGrantForm">
+              <div class="admin-search-field">
+                <label class="field-label" for="adminRoleEmail" data-i18n="targetEmailLabel">Қолданушыны табу</label>
+                <div class="admin-search-input-wrap">
+                  <span class="icon-search" aria-hidden="true"></span>
+                  <input class="text-input text-input--search" id="adminRoleEmail" name="target_email" type="text" required autocomplete="off" data-admin-user-search data-i18n-placeholder="targetEmailPlaceholder" placeholder="Email немесе аккаунт атауы">
+                </div>
+                <div class="admin-search-results" hidden></div>
+              </div>
+              <button class="secondary-button secondary-button--dark" type="submit" data-i18n="adminRoleGrantButton">Admin рөлін беру</button>
             </form>
           </div>
         </details>
