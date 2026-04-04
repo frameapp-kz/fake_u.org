@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Менің билеттерім</title>
+  <meta name="theme-color" content="#090f2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="FAKE-u App">
+  <link rel="icon" href="../img/onay1.jpg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+  <link rel="manifest" href="../site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mytickets.css">
+</head>
+<body data-page-title="ticketsTitle">
+  <main class="app-shell">
+    <section class="phone-frame">
+      <div class="tickets-screen">
+        <div class="tickets-header">
+          <a class="icon-back" href="../onay.html">&#8592;</a>
+          <h1 data-i18n="ticketsHeading">Менің билеттерім</h1>
+          <span></span>
+        </div>
+
+        <div class="day-pill" data-i18n="todayText">Бүгін</div>
+
+        <article id="ticketCard" class="ticket-card">
+          <div class="ticket-side" aria-label="ONAY логотипі">
+            <img class="ticket-side-logo-image" src="../img/onay-logo.PNG" alt="ONAY logo">
+          </div>
+          <div class="ticket-main">
+            <div class="ticket-top">
+              <div>
+                <h2 id="ticketTransport">Автобус</h2>
+                <p data-i18n="ticketSubtitle">Алматы</p>
+              </div>
+              <img class="ticket-status-image" src="../img/onaymap.jpg" alt="Onay map">
+            </div>
+
+            <div class="ticket-info-grid">
+              <span class="ticket-label" data-i18n="directionLabel">Бағыт:</span>
+              <div class="ticket-value route-value">
+                <img class="bus-mini-image" id="ticketTransportIcon" src="../img/autobus.PNG" alt="Bus icon">
+                <strong id="ticketRoute">49</strong>
+                <span id="ticketCodeBox" class="plate-box">112</span>
+              </div>
+            </div>
+
+            <div class="ticket-info-grid">
+              <span class="ticket-label" data-i18n="timeLabel">Уақыт:</span>
+              <div class="ticket-value">
+                <strong id="ticketTime">02.04.26 11:47</strong>
+              </div>
+            </div>
+
+            <div class="ticket-info-grid">
+              <span class="ticket-label" data-i18n="priceLabel">Құны:</span>
+              <div class="ticket-value">
+                <strong>120 ₸</strong>
+              </div>
+            </div>
+
+            <div class="ticket-info-grid">
+              <span class="ticket-label" data-i18n="checkCodeLabel">Тексеру коды:</span>
+              <div class="ticket-value">
+                <strong id="ticketCheckCode">B2150</strong>
+                <img class="ticket-code-icon" src="../img/qrticket.PNG" alt="QR ticket icon">
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <p id="ticketEmpty" class="ticket-empty" hidden>Әзірге белсенді билет жоқ</p>
+      </div>
+    </section>
+  </main>
+
+  <section id="qrOverlay" class="qr-overlay" hidden aria-hidden="true">
+    <div class="qr-overlay-dim"></div>
+    <div class="qr-modal-sheet">
+      <div id="qrPass" class="qr-pass" role="dialog" aria-modal="true" aria-label="QR ticket details">
+        <img class="qr-pass-base" src="../img/qrblock.PNG" alt="QR ticket base">
+        <div class="qr-pass-content">
+          <p id="qrRouteLabel" class="qr-section-label">Бағыт:</p>
+          <div class="qr-route-row">
+            <img class="qr-bus-icon" src="../img/autobus.PNG" alt="Bus icon">
+            <strong id="qrRouteValue">49</strong>
+            <span id="qrPlateValue" class="qr-plate-pill">458FK02</span>
+          </div>
+
+          <p id="qrPurchaseLabel" class="qr-section-label qr-section-label-time">Сатып алу уақыты</p>
+          <div id="qrTimeValue" class="qr-time-value">11:47 2 сәу.</div>
+
+          <div class="qr-code-card">
+            <canvas id="qrCanvas" class="qr-canvas" width="220" height="220" aria-label="QR code"></canvas>
+            <span class="qr-scan-beam" aria-hidden="true"></span>
+            <strong id="qrCheckCode" class="qr-check-code">B2150</strong>
+          </div>
+        </div>
+      </div>
+
+      <button id="qrSupportButton" class="qr-support-button" type="button">Қолдау қызметіне хабарласу</button>
+    </div>
+  </section>
+
+  <script src="mytickets.js"></script>
+</body>
+</html>
