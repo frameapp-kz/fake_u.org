@@ -5,11 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <title>FAKE U</title>
   <meta name="theme-color" content="#2d2568">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FAKE U">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="site.webmanifest">
   <link rel="icon" href="img/icon-512.png" type="image/png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="home" data-title-key="siteHomeTitle" data-back-target="homepage.html">
@@ -23,11 +28,8 @@
       </div>
 
       <div class="header-actions">
-        <a class="icon-button" href="plus.html" aria-label="Open more">
-          <span class="icon-plus" aria-hidden="true"></span>
-        </a>
         <button class="wallet-pill" type="button" data-action="wallet" aria-label="Wallet balance">
-          <span class="icon-wallet" aria-hidden="true"></span>
+          <span class="icon-plus" aria-hidden="true"></span>
           <span data-balance>0 ₸</span>
         </button>
         <button class="icon-button account-trigger" type="button" data-action="account" aria-label="Open account">
@@ -54,10 +56,7 @@
         <div class="menu-grid">
           <a class="menu-card menu-card--neutral" href="onay.html">
             <div class="menu-card-bubbles" aria-hidden="true">
-              <span>O</span>
-              <span>N</span>
-              <span>A</span>
-              <span>Y</span>
+              <img class="menu-card-logo" src="img/onay2.PNG" alt="ONAY logo">
             </div>
             <div>
               <strong data-i18n="onayCardTitle">ONAY</strong>
@@ -66,6 +65,9 @@
           </a>
 
           <button class="menu-card menu-card--danger" type="button" disabled>
+            <div class="menu-card-bubbles" aria-hidden="true">
+              <img class="menu-card-logo" src="img/kaspi.png" alt="Kaspi logo">
+            </div>
             <div>
               <strong data-i18n="kaspiCardTitle">Kaspi</strong>
               <p data-i18n="disabledCardText">Бұл қосымша уақытша жұмыс істемейді</p>
@@ -73,11 +75,41 @@
           </button>
 
           <button class="menu-card menu-card--primary" type="button" disabled>
+            <div class="menu-card-bubbles" aria-hidden="true">
+              <img class="menu-card-logo" src="img/avtobys.png" alt="Avtobys logo">
+            </div>
             <div>
               <strong data-i18n="avtobysCardTitle">Avtobys</strong>
               <p data-i18n="disabledCardText">Бұл қосымша уақытша жұмыс істемейді</p>
             </div>
           </button>
+        </div>
+      </section>
+
+      <section class="content-block content-block--compact">
+        <div class="install-block">
+          <div class="install-block__header">
+            <h2 class="section-title" data-i18n="installSectionTitle">Қосымшаны орнату</h2>
+            <p class="section-subtitle" data-i18n="installSectionText">FAKE U-ді iPhone немесе Android телефоныңызға орнатыңыз.</p>
+          </div>
+
+          <div class="install-grid">
+            <a class="install-card" href="iosinstall.html">
+              <div class="install-card__icon install-card__icon--ios">iOS</div>
+              <div class="install-card__copy">
+                <strong data-i18n="iosInstallTitle">iOS орнату</strong>
+                <p data-i18n="iosInstallText">Safari арқылы home screen-ге қосу жолын қараңыз.</p>
+              </div>
+            </a>
+
+            <a class="install-card install-card--android" href="androidinstall.html">
+              <div class="install-card__icon install-card__icon--android">APK</div>
+              <div class="install-card__copy">
+                <strong data-i18n="androidInstallTitle">Android орнату</strong>
+                <p data-i18n="androidInstallText">FAKEU APK файлын жүктеп, тікелей орнатыңыз.</p>
+              </div>
+            </a>
+          </div>
         </div>
       </section>
     </main>

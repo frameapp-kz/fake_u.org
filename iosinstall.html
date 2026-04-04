@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-  <title>Билет алу</title>
+  <title>iOS Install</title>
   <meta name="theme-color" content="#2d2568">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body data-page="onay" data-title-key="onayPageTitle" data-back-target="homepage.html">
+<body data-page="iosinstall" data-title-key="iosInstallPageTitle" data-back-target="homepage.html">
   <div class="page-shell">
     <header class="app-header">
       <div class="brand-side">
@@ -29,7 +29,6 @@
         </a>
         <a class="brand-name" href="homepage.html">FAKE U</a>
       </div>
-
       <div class="header-actions">
         <button class="wallet-pill" type="button" data-action="wallet" aria-label="Wallet balance">
           <span class="icon-plus" aria-hidden="true"></span>
@@ -53,48 +52,38 @@
         </button>
       </div>
 
-      <section class="hero-card">
-        <div class="hero-icon-wrap">
-          <img src="img/onay.PNG" alt="ONAY icon">
+      <section class="auth-card install-page-card">
+        <h1 class="page-title page-title--compact" data-i18n="iosInstallTitle">iOS орнату</h1>
+        <p class="page-subtitle" data-i18n="iosInstallLead">FAKE U-ді iPhone-ға Safari арқылы home screen-ге орнатуға болады.</p>
+
+        <div class="install-steps">
+          <article class="install-step-card">
+            <span class="install-step-card__num">1</span>
+            <div>
+              <strong data-i18n="iosStep1Title">Safari-де ашыңыз</strong>
+              <p data-i18n="iosStep1Text">Сайтты міндетті түрде Safari браузерінде ашыңыз.</p>
+            </div>
+          </article>
+
+          <article class="install-step-card">
+            <span class="install-step-card__num">2</span>
+            <div>
+              <strong data-i18n="iosStep2Title">Поделиться батырмасын басыңыз</strong>
+              <p data-i18n="iosStep2Text">Төменгі панельден бөлісу батырмасын басыңыз.</p>
+            </div>
+          </article>
+
+          <article class="install-step-card">
+            <span class="install-step-card__num">3</span>
+            <div>
+              <strong data-i18n="iosStep3Title">Экран домойға қосыңыз</strong>
+              <p data-i18n="iosStep3Text">Add to Home Screen батырмасын таңдап, растаңыз.</p>
+            </div>
+          </article>
         </div>
-        <div class="hero-copy">
-          <h1 class="page-title page-title--compact" data-i18n="buyTicketHeading">Билет алу</h1>
-          <p class="page-subtitle" data-i18n="buyTicketText">Автобус түрін, бағытын және нөмірін енгізіңіз</p>
-        </div>
+
+        <a class="primary-button" href="homepage.html" data-i18n="returnHomeButton">Басты бетке оралу</a>
       </section>
-
-      <form class="app-form" id="ticketForm">
-        <div class="ticket-purchase-note" id="ticketPriceNote" data-i18n="ticketPriceNotice">
-          1500 ₸+ балансыңа толтырып, 100 ₸-лік билетті 10 ₸-ден ал. (Саған автоматты түрде 90% жеңілдікпен балансыңа ақша 1-10 минут ішінде түседі).
-        </div>
-
-        <div>
-          <label class="field-label" data-i18n="transportTypeLabel">Көлік түрі</label>
-          <div class="toggle-group">
-            <button class="toggle-button is-active" type="button" data-transport-option="Автобус" data-i18n="busOption">Автобус</button>
-            <button class="toggle-button" type="button" data-transport-option="Троллейбус" data-i18n="trolleyOption">Троллейбус</button>
-          </div>
-          <input type="hidden" name="transport_type" value="Автобус" id="transportTypeInput">
-        </div>
-
-        <div>
-          <label class="field-label" for="directionInput" data-i18n="directionLabel">Автобустың бағыты</label>
-          <input class="text-input" id="directionInput" name="direction" type="text" required data-i18n-placeholder="directionPlaceholder" placeholder="Мысалы, 49">
-        </div>
-
-        <div>
-          <label class="field-label" for="busNumberInput" data-i18n="busNumberLabel">Автобустың нөмірі</label>
-          <input class="text-input" id="busNumberInput" name="bus_number" type="text" required data-i18n-placeholder="busNumberPlaceholder" placeholder="Мысалы, 123ABC02">
-        </div>
-
-        <div class="ticket-balance-warning" id="ticketBalanceWarning" hidden data-i18n="insufficientBalanceNotice">
-          Баланс жеткіліксіз. Билет алу үшін кемі 100 ₸ қажет.
-        </div>
-
-        <button class="primary-button" type="submit" data-i18n="confirmButton">Растау</button>
-
-        <a class="secondary-button secondary-button--dark" href="ONAY/mytickets.html" data-i18n="myTicketsButton">Менің билеттерім</a>
-      </form>
     </main>
   </div>
 
@@ -104,26 +93,12 @@
         <h2 data-i18n="accountTitle">Аккаунт туралы мәлімет</h2>
         <p data-i18n="accountText">Бұл жерде аккаунт туралы негізгі ақпарат көрсетіледі</p>
       </div>
-
       <dl class="account-grid">
-        <div>
-          <dt data-i18n="accountNameLabel">Атау</dt>
-          <dd data-account-name>Қонақ</dd>
-        </div>
-        <div>
-          <dt data-i18n="accountEmailLabel">Email</dt>
-          <dd data-account-email>-</dd>
-        </div>
-        <div>
-          <dt data-i18n="accountRoleLabel">Мәртебе</dt>
-          <dd data-account-role>Қонақ режимі</dd>
-        </div>
-        <div>
-          <dt data-i18n="accountBalanceLabel">Баланс</dt>
-          <dd data-account-balance>0 ₸</dd>
-        </div>
+        <div><dt data-i18n="accountNameLabel">Атау</dt><dd data-account-name>Қонақ</dd></div>
+        <div><dt data-i18n="accountEmailLabel">Email</dt><dd data-account-email>-</dd></div>
+        <div><dt data-i18n="accountRoleLabel">Мәртебе</dt><dd data-account-role>Қонақ режимі</dd></div>
+        <div><dt data-i18n="accountBalanceLabel">Баланс</dt><dd data-account-balance>0 ₸</dd></div>
       </dl>
-
       <div class="account-actions">
         <a class="secondary-button secondary-button--dark" href="admin.html" data-admin-link data-i18n="adminButton" hidden>Admin панель</a>
         <a class="secondary-button" href="signup.html" data-auth-link="signup" data-i18n="signUpTab">Тіркелу</a>
@@ -135,8 +110,8 @@
 
   <div class="modal-backdrop" id="modalBackdrop" hidden></div>
   <div class="toast-stack" id="toastStack"></div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="js/app.js"></script>
 </body>
 </html>
+

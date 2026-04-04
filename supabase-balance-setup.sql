@@ -119,6 +119,49 @@ begin
 end;
 $$;
 
+create or replace function public.ensure_profile_for_email(
+  target_user_email text
+)
+returns public.profiles
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  ensured_profile public.profiles;
+begin
+  if target_user_email is null or btrim(target_user_email) = '' then
+    raise exception 'target_user_email is required';
+  end if;
+
+  insert into public.profiles (id, name, email, balance, ticket_discount_percent, role)
+  select
+    au.id,
+    coalesce(au.raw_user_meta_data->>'name', split_part(au.email, '@', 1)),
+    au.email,
+    coalesce(nullif(au.raw_user_meta_data->>'balance', '')::numeric, 0),
+    coalesce(nullif(au.raw_user_meta_data->>'ticket_discount_percent', '')::numeric, 0),
+    case
+      when lower(coalesce(au.raw_user_meta_data->>'role', 'user')) = 'admin' then 'admin'
+      else 'user'
+    end
+  from auth.users au
+  where lower(au.email) = lower(btrim(target_user_email))
+  on conflict (id) do update
+  set
+    name = coalesce(excluded.name, public.profiles.name),
+    email = excluded.email,
+    updated_at = timezone('utc', now())
+  returning * into ensured_profile;
+
+  if ensured_profile.id is null then
+    raise exception 'User not found';
+  end if;
+
+  return ensured_profile;
+end;
+$$;
+
 drop trigger if exists on_auth_user_updated_profile on auth.users;
 create trigger on_auth_user_updated_profile
   after update of email, raw_user_meta_data on auth.users
@@ -164,6 +207,8 @@ begin
       raise exception 'Only admin can change balances';
     end if;
   end if;
+
+  perform public.ensure_profile_for_email(target_user_email);
 
   select balance
   into previous_balance
@@ -229,6 +274,8 @@ begin
     end if;
   end if;
 
+  perform public.ensure_profile_for_email(target_user_email);
+
   select *
   into target_profile
   from public.profiles
@@ -245,6 +292,90 @@ $$;
 
 revoke all on function public.admin_get_user_profile(text) from public;
 grant execute on function public.admin_get_user_profile(text) to authenticated;
+
+create or replace function public.admin_search_profiles(
+  search_query text
+)
+returns table (
+  id uuid,
+  name text,
+  email text,
+  balance numeric,
+  role text,
+  ticket_discount_percent numeric
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  actor_is_admin boolean := false;
+begin
+  if search_query is null or btrim(search_query) = '' then
+    return;
+  end if;
+
+  if auth.uid() is not null then
+    select exists (
+      select 1
+      from public.profiles
+      where id = auth.uid()
+        and role = 'admin'
+    )
+    into actor_is_admin;
+
+    if not actor_is_admin then
+      raise exception 'Only admin can search profiles';
+    end if;
+  end if;
+
+  insert into public.profiles (id, name, email, balance, ticket_discount_percent, role)
+  select
+    au.id,
+    coalesce(au.raw_user_meta_data->>'name', split_part(au.email, '@', 1)),
+    au.email,
+    coalesce(nullif(au.raw_user_meta_data->>'balance', '')::numeric, 0),
+    coalesce(nullif(au.raw_user_meta_data->>'ticket_discount_percent', '')::numeric, 0),
+    case
+      when lower(coalesce(au.raw_user_meta_data->>'role', 'user')) = 'admin' then 'admin'
+      else 'user'
+    end
+  from auth.users au
+  where lower(coalesce(au.email, '')) like '%' || lower(btrim(search_query)) || '%'
+     or lower(coalesce(au.raw_user_meta_data->>'name', '')) like '%' || lower(btrim(search_query)) || '%'
+  on conflict (id) do update
+  set
+    name = coalesce(excluded.name, public.profiles.name),
+    email = excluded.email,
+    updated_at = timezone('utc', now());
+
+  return query
+  select
+    p.id,
+    p.name,
+    p.email,
+    p.balance,
+    p.role,
+    p.ticket_discount_percent
+  from public.profiles p
+  where lower(coalesce(p.email, '')) like '%' || lower(btrim(search_query)) || '%'
+     or lower(coalesce(p.name, '')) like '%' || lower(btrim(search_query)) || '%'
+  order by
+    case
+      when lower(coalesce(p.email, '')) = lower(btrim(search_query)) then 0
+      when lower(coalesce(p.name, '')) = lower(btrim(search_query)) then 1
+      when lower(coalesce(p.email, '')) like lower(btrim(search_query)) || '%' then 2
+      when lower(coalesce(p.name, '')) like lower(btrim(search_query)) || '%' then 3
+      else 4
+    end,
+    p.updated_at desc,
+    p.email asc
+  limit 8;
+end;
+$$;
+
+revoke all on function public.admin_search_profiles(text) from public;
+grant execute on function public.admin_search_profiles(text) to authenticated;
 
 create or replace function public.admin_set_user_ticket_discount(
   target_user_email text,
@@ -285,6 +416,8 @@ begin
     end if;
   end if;
 
+  perform public.ensure_profile_for_email(target_user_email);
+
   update public.profiles
   set
     ticket_discount_percent = new_ticket_discount_percent,
@@ -310,6 +443,78 @@ $$;
 
 revoke all on function public.admin_set_user_ticket_discount(text, numeric) from public;
 grant execute on function public.admin_set_user_ticket_discount(text, numeric) to authenticated;
+
+create or replace function public.admin_set_user_role(
+  target_user_email text,
+  new_role text
+)
+returns public.profiles
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  actor_is_admin boolean := false;
+  updated_profile public.profiles;
+  normalized_role text := lower(btrim(coalesce(new_role, '')));
+  previous_role text := null;
+begin
+  if target_user_email is null or btrim(target_user_email) = '' then
+    raise exception 'target_user_email is required';
+  end if;
+
+  if normalized_role not in ('user', 'admin') then
+    raise exception 'new_role must be user or admin';
+  end if;
+
+  if auth.uid() is not null then
+    select exists (
+      select 1
+      from public.profiles
+      where id = auth.uid()
+        and role = 'admin'
+    )
+    into actor_is_admin;
+
+    if not actor_is_admin then
+      raise exception 'Only admin can change roles';
+    end if;
+  end if;
+
+  perform public.ensure_profile_for_email(target_user_email);
+
+  select role
+  into previous_role
+  from public.profiles
+  where lower(email) = lower(btrim(target_user_email));
+
+  update public.profiles
+  set
+    role = normalized_role,
+    updated_at = timezone('utc', now())
+  where lower(email) = lower(btrim(target_user_email))
+  returning * into updated_profile;
+
+  if updated_profile.id is null then
+    raise exception 'User not found';
+  end if;
+
+  if normalized_role = 'admin' and coalesce(previous_role, '') <> 'admin' then
+    insert into public.notifications (user_id, type, title, body)
+    values (
+      updated_profile.id,
+      'role',
+      'Admin рөлі берілді',
+      'Сізге admin мәртебесі берілді.'
+    );
+  end if;
+
+  return updated_profile;
+end;
+$$;
+
+revoke all on function public.admin_set_user_role(text, text) from public;
+grant execute on function public.admin_set_user_role(text, text) to authenticated;
 
 create or replace function public.user_send_balance(
   target_user_email text,
@@ -409,6 +614,48 @@ $$;
 revoke all on function public.user_send_balance(text, numeric, text) from public;
 grant execute on function public.user_send_balance(text, numeric, text) to authenticated;
 
+create or replace function public.notify_admins_about_payment(
+  payment_email text,
+  payment_amount numeric,
+  payment_method text
+)
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  inserted_count integer := 0;
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  if payment_email is null or btrim(payment_email) = '' then
+    raise exception 'payment_email is required';
+  end if;
+
+  if payment_amount is null or payment_amount <= 0 then
+    raise exception 'payment_amount must be > 0';
+  end if;
+
+  insert into public.notifications (user_id, type, title, body)
+  select
+    p.id,
+    'payment',
+    'Төлем расталды',
+    lower(btrim(payment_email)) || ' аккаунттан ' || trim(to_char(payment_amount, 'FM999999990.00')) || ' ₸ толтырылды (' || coalesce(nullif(btrim(payment_method), ''), '-') || ').'
+  from public.profiles p
+  where p.role = 'admin';
+
+  get diagnostics inserted_count = row_count;
+  return inserted_count;
+end;
+$$;
+
+revoke all on function public.notify_admins_about_payment(text, numeric, text) from public;
+grant execute on function public.notify_admins_about_payment(text, numeric, text) to authenticated;
+
 -- Backfill existing auth users into profiles once:
 -- insert into public.profiles (id, name, email, balance, role)
 -- select
@@ -435,8 +682,17 @@ grant execute on function public.user_send_balance(text, numeric, text) to authe
 -- Lookup any user's balance as admin:
 -- select public.admin_get_user_profile('user@example.com');
 --
--- Give any user a 90% ticket discount:
--- select public.admin_set_user_ticket_discount('user@example.com', 90);
+-- Search users by email or account name:
+-- select * from public.admin_search_profiles('elnar');
+--
+-- Set any user's ticket discount percent:
+-- select public.admin_set_user_ticket_discount('user@example.com', 40);
+--
+-- Grant admin role to another user:
+-- select public.admin_set_user_role('user@example.com', 'admin');
 --
 -- Send balance to another user:
 -- select public.user_send_balance('user@example.com', 1000, 'Елнар Ә.');
+--
+-- Notify all admins about confirmed payment:
+-- select public.notify_admins_about_payment('user@example.com', 5000, 'Kaspi Bank');
