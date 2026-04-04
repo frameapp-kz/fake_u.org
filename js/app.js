@@ -149,9 +149,9 @@ const TRANSLATIONS = {
     transferSenderPlaceholder: "Мысалы Пәленше П. / Пәленше Пәленшеев",
     transferHintText: "Сумма аударылған соң Аударымды растау кнопкасын басыңыз.",
     transferConfirmButton: "Аударымды растау",
-    transferConfirmed: "Аударым туралы хабарлама жіберілді.",
-    transferNotificationTitle: "Аударым расталды",
-    transferNotificationText: "{sender} адамынан {amount} аударылды.",
+    transferConfirmed: "✓ Төлем расталды, 1-10 минут ішінде баланс толтырылады.",
+    transferNotificationTitle: "Төлем расталды",
+    transferNotificationText: "{email} аккаунттан {amount} толтырылды ({method}).",
     sendHeading: "Аудару",
     sendText: "Басқа аккаунттың email адресіне тікелей баланс жіберіңіз.",
     receiverEmailLabel: "Қабылдаушы аккаунттың email адресі",
@@ -330,9 +330,9 @@ const TRANSLATIONS = {
     transferSenderPlaceholder: "Например, Петров П. / Петров Петрович",
     transferHintText: "После перевода суммы нажмите кнопку подтверждения перевода.",
     transferConfirmButton: "Подтвердить перевод",
-    transferConfirmed: "Уведомление о переводе отправлено.",
-    transferNotificationTitle: "Перевод подтвержден",
-    transferNotificationText: "От {sender} поступил перевод на сумму {amount}.",
+    transferConfirmed: "✓ Платеж подтвержден, баланс пополнится в течение 1-10 минут.",
+    transferNotificationTitle: "Платеж подтвержден",
+    transferNotificationText: "С аккаунта {email} пополнено {amount} ({method}).",
     sendHeading: "Перевод",
     sendText: "Отправьте баланс напрямую на email другого аккаунта.",
     receiverEmailLabel: "Email аккаунта получателя",
@@ -381,6 +381,7 @@ const state = {
   profile: { name: "Қонақ", email: "-", balance: 0, role: "guest", ticket_discount_percent: 0 },
   supabase: null,
   supabaseMode: false,
+  pseudoFullscreen: false,
   tickets: [],
   notifications: [],
   currentTicket: null,
@@ -402,6 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function init() {
+  unlockBodyScroll();
   initSupabase();
   enhanceSharedUi();
   bindCommonUi();
@@ -413,6 +415,15 @@ async function init() {
   renderAccount();
   renderWallet();
   renderNotifications();
+}
+
+function lockBodyScroll() {
+  document.body.classList.add("is-scroll-locked");
+}
+
+function unlockBodyScroll() {
+  document.body.classList.remove("is-scroll-locked");
+  document.body.style.overflow = "";
 }
 
 function initSupabase() {
@@ -586,6 +597,7 @@ function bindCommonUi() {
   });
 
   document.addEventListener("fullscreenchange", syncFullscreenUi);
+  window.addEventListener("pagehide", unlockBodyScroll);
 }
 
 async function initAuth() {
@@ -1181,14 +1193,14 @@ function openQrPanel(ticket) {
   document.getElementById("qrCheckCode").textContent = ticket.checkCode;
   drawPseudoQr(document.getElementById("qrCanvas"), ticket.qrSeed);
   panel.hidden = false;
-  document.body.style.overflow = "hidden";
+  lockBodyScroll();
 }
 
 function closeQrPanel() {
   const panel = document.getElementById("qrPanel");
   if (!panel) return;
   panel.hidden = true;
-  document.body.style.overflow = "";
+  unlockBodyScroll();
 }
 
 function toggleNotificationsPanel() {
@@ -1677,13 +1689,35 @@ async function handlePaymentConfirmSubmit(event) {
     return;
   }
 
-  await addActivity({
-    title: t("transferNotificationTitle"),
-    body: `${t("transferNotificationText")
-      .replace("{sender}", senderName)
-      .replace("{amount}", formatWalletAmount(amount))}${methodName ? ` (${methodName})` : ""}`,
-    type: "transfer"
-  });
+  const paymentEmail = state.profile.email && state.profile.email !== "-" ? state.profile.email : senderName;
+
+  if (state.supabaseMode && state.supabase && state.user) {
+    try {
+      const { error } = await state.supabase.rpc("notify_admins_about_payment", {
+        payment_email: paymentEmail,
+        payment_amount: amount,
+        payment_method: methodName || "-"
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || t("unknownError"));
+      return;
+    }
+  } else {
+    const adminUsers = loadLocalUsers().filter((user) => String(user.role || "").toLowerCase() === "admin");
+    for (const adminUser of adminUsers) {
+      await addActivity({
+        title: t("transferNotificationTitle"),
+        body: t("transferNotificationText")
+          .replace("{email}", paymentEmail)
+          .replace("{amount}", formatWalletAmount(amount))
+          .replace("{method}", methodName || "-"),
+        type: "payment",
+        userId: adminUser.id
+      });
+    }
+  }
 
   showToast(t("transferConfirmed"));
   event.currentTarget.reset();
@@ -2088,23 +2122,40 @@ function showToast(message) {
 }
 
 function isFullscreenActive() {
-  return Boolean(document.fullscreenElement);
+  return Boolean(document.fullscreenElement) || state.pseudoFullscreen;
+}
+
+function isIosLikeSafari() {
+  const ua = navigator.userAgent || "";
+  return /iPhone|iPad|iPod/i.test(ua) && /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS/i.test(ua);
 }
 
 async function toggleFullscreenMode() {
   try {
-    if (isFullscreenActive()) {
-      await document.exitFullscreen();
+    const target = document.documentElement;
+    const canUseNativeFullscreen = Boolean(target?.requestFullscreen) && !isIosLikeSafari();
+
+    if (!canUseNativeFullscreen) {
+      state.pseudoFullscreen = !state.pseudoFullscreen;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      showToast(t("fullscreenHint"));
+      syncFullscreenUi();
       return;
     }
 
-    const target = document.documentElement;
-    if (target?.requestFullscreen) {
-      await target.requestFullscreen();
-      showToast(t("fullscreenHint"));
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      state.pseudoFullscreen = false;
+      return;
     }
+
+    await target.requestFullscreen();
+    state.pseudoFullscreen = false;
+    showToast(t("fullscreenHint"));
   } catch (error) {
     console.error("Fullscreen toggle failed", error);
+    state.pseudoFullscreen = !state.pseudoFullscreen;
+    window.scrollTo({ top: 0, behavior: "smooth" });
     showToast(t("fullscreenHint"));
   } finally {
     syncFullscreenUi();
@@ -2112,7 +2163,7 @@ async function toggleFullscreenMode() {
 }
 
 function syncFullscreenUi() {
-  const active = isFullscreenActive();
+  const active = Boolean(document.fullscreenElement) || state.pseudoFullscreen;
   document.body.classList.toggle("is-fullscreen-mode", active);
 
   document.querySelectorAll("[data-action='fullscreen']").forEach((button) => {
