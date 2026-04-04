@@ -39,10 +39,21 @@ let activeTicket = null;
 let isQrClosing = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+  unlockBodyScroll();
   applyTranslations();
   renderCurrentTicket();
   setupQrPopup();
+  window.addEventListener("pagehide", unlockBodyScroll);
 });
+
+function lockBodyScroll() {
+  document.body.classList.add("is-scroll-locked");
+}
+
+function unlockBodyScroll() {
+  document.body.classList.remove("is-scroll-locked");
+  document.body.style.overflow = "";
+}
 
 function getLang() {
   return localStorage.getItem(STORAGE_KEYS.lang) === "ru" ? "ru" : "kk";
@@ -238,7 +249,7 @@ function openQrPopup() {
 
   qrOverlay.hidden = false;
   qrOverlay.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  lockBodyScroll();
 
   requestAnimationFrame(() => {
     qrOverlay.classList.remove("is-closing");
@@ -260,7 +271,7 @@ function closeQrPopup() {
     qrOverlay.hidden = true;
     qrOverlay.setAttribute("aria-hidden", "true");
     qrOverlay.classList.remove("is-closing");
-    document.body.style.overflow = "";
+    unlockBodyScroll();
     isQrClosing = false;
   }, 560);
 }

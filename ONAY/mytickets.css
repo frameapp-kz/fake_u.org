@@ -28,6 +28,10 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+body.is-scroll-locked {
+  overflow: hidden;
+}
+
 a {
   color: inherit;
   text-decoration: none;
