@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#090f2f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="FAKE-u App">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FAKE U">
   <link rel="icon" href="../img/onay1.jpg" type="image/jpeg">
   <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
   <link rel="manifest" href="../site.webmanifest">
@@ -76,9 +76,25 @@
         </article>
 
         <p id="ticketEmpty" class="ticket-empty" hidden>Әзірге белсенді билет жоқ</p>
+
+        <section class="ads-inline-zone" aria-label="Ticket ads">
+          <a id="globalAdCard" class="ad-banner-card ad-banner-card--inline" href="#" target="_blank" rel="noopener noreferrer">
+            <span class="ad-banner-label">GLOBAL_ADD</span>
+            <img class="ad-banner-image" alt="Global ad banner" hidden>
+          </a>
+        </section>
       </div>
     </section>
   </main>
+
+  <section id="adsDrawer" class="ads-drawer" aria-label="More ads">
+    <div class="ads-drawer__sheet">
+      <button id="adsDrawerHandle" class="ads-drawer__handle" type="button" aria-expanded="false" aria-controls="adsDrawerList">
+        <span class="ads-drawer__grabber" aria-hidden="true"></span>
+      </button>
+      <div id="adsDrawerList" class="ads-drawer__list"></div>
+    </div>
+  </section>
 
   <section id="qrOverlay" class="qr-overlay" hidden aria-hidden="true">
     <div class="qr-overlay-dim"></div>
@@ -97,7 +113,7 @@
           <div id="qrTimeValue" class="qr-time-value">11:47 2 сәу.</div>
 
           <div class="qr-code-card">
-            <canvas id="qrCanvas" class="qr-canvas" width="220" height="220" aria-label="QR code"></canvas>
+            <canvas id="qrCanvas" class="qr-canvas" width="240" height="240" aria-label="QR code"></canvas>
             <span class="qr-scan-beam" aria-hidden="true"></span>
             <strong id="qrCheckCode" class="qr-check-code">B2150</strong>
           </div>

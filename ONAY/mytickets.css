@@ -25,11 +25,9 @@ body {
   background: linear-gradient(180deg, #f9fbff 0%, #eef3fb 100%);
   color: var(--text);
   overflow-x: hidden;
+  overflow-y: auto;
   -webkit-tap-highlight-color: transparent;
-}
-
-body.is-scroll-locked {
-  overflow: hidden;
+  background-attachment: fixed;
 }
 
 a {
@@ -64,7 +62,7 @@ img {
 
 .tickets-screen {
   min-height: 100vh;
-  padding: 18px 14px 28px;
+  padding: 18px 14px 186px;
   background: linear-gradient(180deg, #f9fbff 0%, #eef3fb 100%);
 }
 
@@ -233,6 +231,102 @@ img {
   font-size: 0.92rem;
 }
 
+.ads-inline-zone {
+  margin-top: 18px;
+}
+
+.ad-banner-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #ffffff;
+  min-height: 104px;
+}
+
+.ad-banner-card--inline {
+  min-height: 106px;
+}
+
+.ad-banner-label {
+  display: none;
+}
+
+.ad-banner-card::before {
+  content: "";
+  display: block;
+  padding-top: 31%;
+}
+
+.ad-banner-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ads-drawer {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 34;
+  width: min(100%, 430px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.ads-drawer__sheet {
+  pointer-events: auto;
+  width: 100%;
+  min-height: 220px;
+  max-height: min(62vh, 560px);
+  padding: 10px 16px 18px;
+  border-radius: 30px 30px 0 0;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 -16px 40px rgba(78, 84, 109, 0.14);
+  transform: translateY(calc(100% - 132px));
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ads-drawer.is-open .ads-drawer__sheet {
+  transform: translateY(0);
+}
+
+.ads-drawer__handle {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 0 0 12px;
+  background: transparent;
+  border: 0;
+  cursor: grab;
+}
+
+.ads-drawer__grabber {
+  width: 62px;
+  height: 8px;
+  border-radius: 999px;
+  background: #e7e7e7;
+}
+
+.ads-drawer__list {
+  display: grid;
+  gap: 16px;
+  overflow-y: auto;
+  max-height: calc(min(62vh, 560px) - 38px);
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.ad-banner-card--drawer {
+  min-height: 124px;
+}
+
+.ad-banner-card--drawer::before {
+  padding-top: 31%;
+}
+
 .qr-overlay {
   position: fixed;
   inset: 0;
@@ -374,33 +468,31 @@ img {
 
 .qr-code-card {
   position: relative;
-  width: 74%;
-  max-width: 292px;
+  width: 71%;
+  max-width: 266px;
   margin-top: 13.2%;
-  padding: 4px 10px 10px;
-  border-radius: 16px;
+  padding: 5px 5px 8px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: none;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .qr-canvas {
-  width: 112%;
+  width: 100%;
   height: auto;
   display: block;
-  margin-left: -6%;
-  margin-top: -6px;
-  margin-bottom: 2px;
-  border-radius: 10px;
+  margin: 0 auto;
+  border-radius: 12px;
   background: #ffffff;
 }
 
 .qr-scan-beam {
   position: absolute;
-  left: 10px;
-  right: 10px;
+  left: 5px;
+  right: 5px;
   height: 34px;
-  top: 8px;
+  top: 5px;
   border-radius: 999px;
   background:
     linear-gradient(
@@ -417,8 +509,8 @@ img {
 
 .qr-check-code {
   display: block;
-  margin-top: 2px;
-  padding-bottom: 2px;
+  margin-top: 6px;
+  padding-bottom: 0;
   font-size: clamp(0.95rem, 3.7vw, 1.05rem);
   line-height: 1.15;
   font-weight: 800;
