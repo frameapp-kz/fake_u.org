@@ -373,11 +373,11 @@ img {
   width: 74%;
   max-width: 292px;
   margin-top: 13.2%;
-  padding: 0 10px 0;
+  padding: 4px 10px 10px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: none;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .qr-canvas {
@@ -386,7 +386,7 @@ img {
   display: block;
   margin-left: -6%;
   margin-top: -6px;
-  margin-bottom: -6px;
+  margin-bottom: 2px;
   border-radius: 10px;
   background: #ffffff;
 }
@@ -413,9 +413,10 @@ img {
 
 .qr-check-code {
   display: block;
-  margin-top: -2px;
+  margin-top: 2px;
+  padding-bottom: 2px;
   font-size: clamp(0.95rem, 3.7vw, 1.05rem);
-  line-height: 1;
+  line-height: 1.15;
   font-weight: 800;
   color: #1a1a1a;
 }
