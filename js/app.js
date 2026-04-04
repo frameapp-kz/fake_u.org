@@ -1,6 +1,8 @@
 const TRANSLATIONS = {
   kk: {
     siteHomeTitle: "FAKE U",
+    iosInstallPageTitle: "iOS орнату",
+    androidInstallPageTitle: "Android орнату",
     onayPageTitle: "Билет алу",
     signInPageTitle: "Кіру",
     signUpPageTitle: "Тіркелу",
@@ -15,7 +17,25 @@ const TRANSLATIONS = {
     cryptoPayPageTitle: "Crypto Wallet",
     langKk: "Қазақша",
     langRu: "Русский",
+    langEn: "English",
+    langZh: "中文",
     mainMenuHeading: "Басты меню",
+    installSectionTitle: "Қосымшаны орнату",
+    installSectionText: "FAKE U-ді iPhone немесе Android телефоныңызға орнатыңыз.",
+    iosInstallTitle: "iOS орнату",
+    iosInstallText: "Safari арқылы home screen-ге қосу жолын қараңыз.",
+    androidInstallTitle: "Android орнату",
+    androidInstallText: "FAKEU APK файлын жүктеп, тікелей орнатыңыз.",
+    iosInstallLead: "FAKE U-ді iPhone-ға Safari арқылы home screen-ге орнатуға болады.",
+    iosStep1Title: "Safari-де ашыңыз",
+    iosStep1Text: "Сайтты міндетті түрде Safari браузерінде ашыңыз.",
+    iosStep2Title: "Поделиться батырмасын басыңыз",
+    iosStep2Text: "Төменгі панельден бөлісу батырмасын басыңыз.",
+    iosStep3Title: "Экран домойға қосыңыз",
+    iosStep3Text: "Add to Home Screen батырмасын таңдап, растаңыз.",
+    androidInstallLead: "APK файлын жүктеп алып, Android құрылғыға тікелей орнатыңыз.",
+    androidInstallHint: "Егер браузер ескерту берсе, \"Install unknown apps\" рұқсатын қосыңыз.",
+    androidInstallButton: "Install FAKEU APK",
     onayCardTitle: "ONAY",
     onayCardText: "Автобусқа оңай билет ал",
     kaspiCardTitle: "Kaspi",
@@ -61,27 +81,37 @@ const TRANSLATIONS = {
     adminOnly: "Бұл бөлімге тек admin аккаунт кіре алады.",
     adminReady: "Admin режимі белсенді. Email мен жаңа балансты енгізіңіз.",
     adminLookupHeading: "Балансты тексеру",
-    adminLookupText: "Қолданушының email арқылы ағымдағы балансын тексеріңіз.",
+    adminLookupText: "Қолданушыны email немесе аккаунт атауы арқылы табыңыз.",
     adminLookupButton: "Балансты тексеру",
     adminLookupTitle: "Табылған аккаунт",
     adminLookupSuccess: "Аккаунт табылды.",
     adminLookupNotFound: "Мұндай email-пен аккаунт табылмады.",
-    adminDiscountHeading: "90% жеңілдік беру",
-    adminDiscountText: "Бұл аккаунт әр 100 ₸ билетке тек 10 ₸ төлейді.",
-    adminDiscountButton: "90% жеңілдік беру",
-    adminDiscountUpdated: "90% жеңілдік сәтті берілді.",
-    adminDiscountResetHeading: "Жеңілдікті қайтарып алу",
-    adminDiscountResetText: "Бұл аккаунт қайтадан билетті толық бағамен алады.",
-    adminDiscountResetButton: "Жеңілдікті алып тастау",
-    adminDiscountRemoved: "Жеңілдік өшірілді.",
-    targetEmailLabel: "Қолданушы email",
-    targetEmailPlaceholder: "user@example.com",
+    adminBalanceText: "Қолданушыны тауып, балансын жаңартыңыз.",
+    adminAdjustHeading: "Балансты қосу/азайту",
+    adminAdjustText: "Қолданушының балансына тек сома қосыңыз немесе азайтыңыз.",
+    adminAdjustModeLabel: "Әрекет",
+    adminAdjustAdd: "Қосу",
+    adminAdjustSubtract: "Азайту",
+    adminAdjustAmountLabel: "Сома",
+    adminAdjustButton: "Қолдану",
+    adminAdjustUpdated: "Балансқа өзгеріс сәтті қолданылды.",
+    adminDiscountHeading: "Жеңілдік беру",
+    adminDiscountText: "Қолданушыға 0%-100% аралығында билет жеңілдігін орнатыңыз.",
+    adminDiscountButton: "Жеңілдікті сақтау",
+    adminDiscountUpdated: "Жеңілдік сәтті жаңартылды.",
+    adminRoleGrantHeading: "Admin рөлін беру",
+    adminRoleGrantText: "Бұл аккаунтқа admin құралдарына қолжетімділік беріңіз.",
+    adminRoleGrantButton: "Admin рөлін беру",
+    adminRoleGranted: "Admin рөлі берілді.",
+    targetEmailLabel: "Қолданушыны табу",
+    targetEmailPlaceholder: "Email немесе аккаунт атауы",
     balanceAmountLabel: "Жаңа баланс",
     balanceAmountPlaceholder: "5000",
     adminSubmitButton: "Балансты жаңарту",
     adminResultTitle: "Жаңартылған аккаунт",
     adminBalanceUpdated: "Баланс сәтті жаңартылды.",
     discountRateLabel: "Жеңілдік",
+    adminSearchNoResults: "Ештеңе табылмады",
     notificationsButton: "Хабарламалар",
     notificationsTitle: "Соңғы әрекеттер",
     notificationsEmpty: "Әзірге жаңа хабарлама жоқ",
@@ -96,7 +126,7 @@ const TRANSLATIONS = {
     activityAdminRoleText: "Сізге admin мәртебесі берілді.",
     buyTicketHeading: "Билет алу",
     buyTicketText: "Автобус түрін, бағытын және нөмірін енгізіңіз",
-    ticketPriceNotice: "Әр билет құны: 100 ₸. Билет алу кезінде бұл сома баланстан алынады.",
+    ticketPriceNotice: "1500 ₸+ балансыңа толтырып, 100 ₸-лік билетті 10 ₸-ден ал. (Саған автоматты түрде 90% жеңілдікпен балансыңа ақша 1-10 минут ішінде түседі).",
     ticketDiscountNotice: "Сіздің жеңілдігіңіз: {discount}%. Қолданыстағы билет бағасы: {price}.",
     insufficientBalanceNotice: "Баланс жеткіліксіз. Билет алу үшін кемі 100 ₸ қажет.",
     currentBalanceNotice: "Қазіргі баланс: {balance}",
@@ -182,6 +212,8 @@ const TRANSLATIONS = {
   },
   ru: {
     siteHomeTitle: "FAKE U",
+    iosInstallPageTitle: "Установка iOS",
+    androidInstallPageTitle: "Установка Android",
     onayPageTitle: "Покупка билета",
     signInPageTitle: "Вход",
     signUpPageTitle: "Регистрация",
@@ -196,7 +228,25 @@ const TRANSLATIONS = {
     cryptoPayPageTitle: "Crypto Wallet",
     langKk: "Қазақша",
     langRu: "Русский",
+    langEn: "English",
+    langZh: "中文",
     mainMenuHeading: "Главное меню",
+    installSectionTitle: "Установка приложения",
+    installSectionText: "Установите FAKE U на iPhone или Android.",
+    iosInstallTitle: "Установка iOS",
+    iosInstallText: "Посмотрите, как добавить сайт на домашний экран через Safari.",
+    androidInstallTitle: "Установка Android",
+    androidInstallText: "Скачайте APK FAKEU и установите его напрямую.",
+    iosInstallLead: "FAKE U можно установить на iPhone через Safari и домашний экран.",
+    iosStep1Title: "Откройте в Safari",
+    iosStep1Text: "Обязательно откройте сайт именно в браузере Safari.",
+    iosStep2Title: "Нажмите Поделиться",
+    iosStep2Text: "Нажмите кнопку поделиться на нижней панели.",
+    iosStep3Title: "Добавьте на экран домой",
+    iosStep3Text: "Выберите Add to Home Screen и подтвердите установку.",
+    androidInstallLead: "Скачайте APK и установите его напрямую на Android-устройство.",
+    androidInstallHint: "Если браузер предупредит, включите разрешение \"Install unknown apps\".",
+    androidInstallButton: "Install FAKEU APK",
     onayCardTitle: "ONAY",
     onayCardText: "Купить билет на автобус быстро",
     kaspiCardTitle: "Kaspi",
@@ -242,27 +292,37 @@ const TRANSLATIONS = {
     adminOnly: "Этот раздел доступен только admin аккаунту.",
     adminReady: "Режим admin активен. Введите email пользователя и новый баланс.",
     adminLookupHeading: "Проверка баланса",
-    adminLookupText: "Проверьте текущий баланс пользователя по email.",
+    adminLookupText: "Найдите пользователя по email или имени аккаунта.",
     adminLookupButton: "Проверить баланс",
     adminLookupTitle: "Найденный аккаунт",
     adminLookupSuccess: "Аккаунт найден.",
     adminLookupNotFound: "Аккаунт с таким email не найден.",
-    adminDiscountHeading: "Выдать скидку 90%",
-    adminDiscountText: "Этот аккаунт будет платить за билет 10 ₸ вместо 100 ₸.",
-    adminDiscountButton: "Выдать скидку 90%",
-    adminDiscountUpdated: "Скидка 90% успешно выдана.",
-    adminDiscountResetHeading: "Снять скидку",
-    adminDiscountResetText: "Этот аккаунт снова будет покупать билет по полной цене.",
-    adminDiscountResetButton: "Убрать скидку",
-    adminDiscountRemoved: "Скидка отключена.",
-    targetEmailLabel: "Email пользователя",
-    targetEmailPlaceholder: "user@example.com",
+    adminBalanceText: "Найдите пользователя и обновите его баланс.",
+    adminAdjustHeading: "Добавить или списать баланс",
+    adminAdjustText: "Только добавьте сумму к балансу пользователя или уменьшите ее.",
+    adminAdjustModeLabel: "Действие",
+    adminAdjustAdd: "Добавить",
+    adminAdjustSubtract: "Списать",
+    adminAdjustAmountLabel: "Сумма",
+    adminAdjustButton: "Применить",
+    adminAdjustUpdated: "Изменение баланса успешно применено.",
+    adminDiscountHeading: "Выдать скидку",
+    adminDiscountText: "Установите пользователю скидку на билет от 0% до 100%.",
+    adminDiscountButton: "Сохранить скидку",
+    adminDiscountUpdated: "Скидка успешно обновлена.",
+    adminRoleGrantHeading: "Выдать роль admin",
+    adminRoleGrantText: "Дайте этому аккаунту доступ к admin-инструментам.",
+    adminRoleGrantButton: "Выдать роль admin",
+    adminRoleGranted: "Роль admin выдана.",
+    targetEmailLabel: "Найти пользователя",
+    targetEmailPlaceholder: "Email или имя аккаунта",
     balanceAmountLabel: "Новый баланс",
     balanceAmountPlaceholder: "5000",
     adminSubmitButton: "Обновить баланс",
     adminResultTitle: "Обновленный аккаунт",
     adminBalanceUpdated: "Баланс успешно обновлен.",
     discountRateLabel: "Скидка",
+    adminSearchNoResults: "Ничего не найдено",
     notificationsButton: "Уведомления",
     notificationsTitle: "Последние действия",
     notificationsEmpty: "Пока нет новых уведомлений",
@@ -277,7 +337,7 @@ const TRANSLATIONS = {
     activityAdminRoleText: "Вашему аккаунту назначена роль admin.",
     buyTicketHeading: "Купить билет",
     buyTicketText: "Укажите тип транспорта, направление и номер",
-    ticketPriceNotice: "Стоимость одного билета: 100 ₸. Эта сумма списывается с баланса при покупке.",
+    ticketPriceNotice: "Пополните баланс на 1500 ₸+ и покупайте билет за 10 ₸ вместо 100 ₸. (Вам автоматически начислится скидка 90%, а деньги поступят на баланс в течение 1-10 минут).",
     ticketDiscountNotice: "Ваша скидка: {discount}%. Текущая цена билета: {price}.",
     insufficientBalanceNotice: "Недостаточно средств. Для покупки билета нужно минимум 100 ₸.",
     currentBalanceNotice: "Текущий баланс: {balance}",
@@ -363,6 +423,393 @@ const TRANSLATIONS = {
   }
 };
 
+TRANSLATIONS.en = {
+  ...TRANSLATIONS.ru,
+  siteHomeTitle: "FAKE U",
+  onayPageTitle: "Buy Ticket",
+  signInPageTitle: "Sign In",
+  signUpPageTitle: "Sign Up",
+  adminPageTitle: "Balance Control",
+  myTicketsPageTitle: "My Tickets",
+  historyPageTitle: "Ticket History",
+  plusPageTitle: "More",
+  sendPayPageTitle: "Transfer",
+  langKk: "Қазақша",
+  langRu: "Русский",
+  langEn: "English",
+  langZh: "中文",
+  mainMenuHeading: "Main Menu",
+  installSectionTitle: "Install the App",
+  installSectionText: "Install FAKE U on your iPhone or Android phone.",
+  iosInstallPageTitle: "Install on iOS",
+  androidInstallPageTitle: "Install on Android",
+  iosInstallTitle: "Install on iOS",
+  iosInstallText: "See how to add the site to your Home Screen through Safari.",
+  androidInstallTitle: "Install on Android",
+  androidInstallText: "Download the FAKEU APK and install it directly.",
+  iosInstallLead: "You can install FAKE U on iPhone through Safari and Add to Home Screen.",
+  iosStep1Title: "Open in Safari",
+  iosStep1Text: "Open this site specifically in the Safari browser.",
+  iosStep2Title: "Tap Share",
+  iosStep2Text: "Tap the Share button on the bottom toolbar.",
+  iosStep3Title: "Add to Home Screen",
+  iosStep3Text: "Choose Add to Home Screen and confirm the installation.",
+  androidInstallLead: "Download the APK file and install it directly on your Android device.",
+  androidInstallHint: "If your browser shows a warning, enable the \"Install unknown apps\" permission.",
+  androidInstallButton: "Install FAKEU APK",
+  onayCardText: "Buy a bus ticket quickly",
+  disabledCardText: "This service is temporarily unavailable",
+  accountTitle: "Account Details",
+  accountText: "Your main account information is shown here",
+  accountNameLabel: "Name",
+  accountEmailLabel: "Email",
+  accountRoleLabel: "Role",
+  accountBalanceLabel: "Balance",
+  guestRole: "Guest",
+  userRole: "User",
+  adminRole: "Admin",
+  signUpTab: "Sign Up",
+  signInTab: "Sign In",
+  logoutButton: "Log Out",
+  myTicketsButton: "My Tickets",
+  exitFullscreenButton: "Exit",
+  fullscreenHint: "This mode hides extra browser panels. The system status bar may still stay visible depending on the device.",
+  backLabel: "← Back",
+  signInHeading: "Sign in to your account",
+  signInText: "Balance and ticket history are saved to your account",
+  signUpHeading: "Create Account",
+  signUpText: "Balance and ticket history are saved to your account",
+  nameField: "Account name",
+  passwordField: "Password",
+  confirmPasswordField: "Repeat password",
+  namePlaceholder: "For example, Name",
+  passwordPlaceholder: "At least 6 characters",
+  confirmPasswordPlaceholder: "Enter password again",
+  signInAction: "Sign In",
+  signUpAction: "Register",
+  adminHeading: "Balance Control",
+  adminText: "Manage balances of users registered through Supabase.",
+  adminStateLoading: "Checking access...",
+  adminNeedsSupabase: "This page works only in Supabase mode. Add the full Supabase publishable key first.",
+  adminOnly: "This section is available only for admin accounts.",
+  adminReady: "Admin mode is active. Choose a user and manage the account.",
+  adminLookupHeading: "Check Balance",
+  adminLookupText: "Find a user by email or account name.",
+  adminLookupButton: "Check Balance",
+  adminLookupTitle: "Found Account",
+  adminLookupSuccess: "Account found.",
+  adminLookupNotFound: "No account was found for this query.",
+  adminBalanceText: "Find a user and update the balance.",
+  adminAdjustHeading: "Add or subtract balance",
+  adminAdjustText: "Only add to or subtract an amount from the user's balance.",
+  adminAdjustModeLabel: "Action",
+  adminAdjustAdd: "Add",
+  adminAdjustSubtract: "Subtract",
+  adminAdjustAmountLabel: "Amount",
+  adminAdjustButton: "Apply",
+  adminAdjustUpdated: "Balance change applied successfully.",
+  adminDiscountHeading: "Set Discount",
+  adminDiscountText: "Set a ticket discount from 0% to 100% for the selected account.",
+  adminDiscountButton: "Save Discount",
+  adminDiscountUpdated: "Discount updated successfully.",
+  adminRoleGrantHeading: "Grant Admin Role",
+  adminRoleGrantText: "Give this account access to admin tools.",
+  adminRoleGrantButton: "Grant Admin Role",
+  adminRoleGranted: "Admin role granted.",
+  targetEmailLabel: "Find User",
+  targetEmailPlaceholder: "Email or account name",
+  balanceAmountLabel: "New Balance",
+  balanceAmountPlaceholder: "5000",
+  adminSubmitButton: "Update Balance",
+  adminResultTitle: "Updated Account",
+  adminBalanceUpdated: "Balance updated successfully.",
+  discountRateLabel: "Discount",
+  adminSearchNoResults: "Nothing found",
+  notificationsButton: "Notifications",
+  notificationsTitle: "Recent Activity",
+  notificationsEmpty: "No new notifications yet",
+  reloadButton: "Reload",
+  activityBalanceTopUpTitle: "Balance topped up",
+  activityDiscountTitle: "Discount granted",
+  activityTicketTitle: "New ticket purchased",
+  activityAdminRoleTitle: "Admin role granted",
+  activityBalanceTopUpText: "Your balance has been updated to {balance}.",
+  activityDiscountText: "A {discount}% discount has been applied to your account.",
+  activityTicketText: "A ticket for route {direction} was purchased. Charged: {price}.",
+  activityAdminRoleText: "Your account has been granted admin access.",
+  buyTicketHeading: "Buy Ticket",
+  buyTicketText: "Enter transport type, route, and number",
+  ticketPriceNotice: "Top up your balance by 1500 ₸+ and get 100 ₸ tickets for 10 ₸. (A 90% discount will be applied automatically, and the balance top-up will arrive within 1-10 minutes).",
+  ticketDiscountNotice: "Your discount: {discount}%. Current ticket price: {price}.",
+  insufficientBalanceNotice: "Insufficient balance. At least 100 ₸ is required to buy a ticket.",
+  currentBalanceNotice: "Current balance: {balance}",
+  insufficientBalanceToast: "Insufficient balance. Ticket purchase is not available.",
+  historyLink: "Ticket History",
+  historyLinkShort: "History",
+  myTicketsLinkShort: "Tickets",
+  transportTypeLabel: "Transport Type",
+  busOption: "Bus",
+  trolleyOption: "Trolleybus",
+  directionLabel: "Bus Route",
+  directionPlaceholder: "For example, 49",
+  busNumberLabel: "Bus Number",
+  busNumberPlaceholder: "For example, 123ABC02",
+  confirmButton: "Confirm",
+  myTicketsHeading: "My Tickets",
+  myTicketsEmpty: "No active tickets yet",
+  historyHeading: "Ticket History",
+  historySubheading: "Tickets purchased through ONAY are stored here",
+  historyEmpty: "No ticket history yet",
+  todayText: "Today",
+  ticketSubtitle: "Almaty, electronic ticket",
+  directionShort: "Route",
+  transportShort: "Transport",
+  timeLabel: "Time",
+  priceLabel: "Price",
+  checkCodeLabel: "Check Code",
+  qrRouteLabel: "Route:",
+  qrPurchaseTimeLabel: "Purchase Time",
+  supportButton: "Support",
+  archiveButton: "Move to History",
+  plusHeading: "Payment Methods",
+  plusText: "Choose the payment method you need. Each section opens on its own page.",
+  kaspiMethodText: "Payment page for Kaspi QR and bank card transfers.",
+  halykMethodText: "Payment and transfer page for Halyk Bank.",
+  freedomMethodText: "Payment page for Freedom Bank.",
+  cryptoMethodText: "Payment page for a crypto wallet.",
+  sendMethodText: "Transfer balance to another account by email.",
+  paymentMethodText: "This section is ready for future payment flow. A real payment form and confirmation can be connected here later.",
+  openPaymentButton: "Open Payment",
+  backToPaymentsButton: "Back to Payment Methods",
+  returnHomeButton: "Back to Home",
+  freedomCardLabel: "Card Number",
+  freedomCardHint: "Copy to make a transfer",
+  copyCardSuccess: "Card number copied.",
+  cardOwnerLabel: "Card Holder",
+  transferAmountLabel: "Transferred Amount",
+  transferAmountPlaceholder: "For example, 1000",
+  transferSenderLabel: "Sender name or card owner name",
+  transferSenderPlaceholder: "For example, John D. / John Doe",
+  transferHintText: "After the amount is transferred, press the confirm transfer button.",
+  transferConfirmButton: "Confirm Transfer",
+  transferConfirmed: "✓ Payment confirmed. The balance will be topped up within 1-10 minutes.",
+  transferNotificationTitle: "Payment Confirmed",
+  transferNotificationText: "{email} account topped up {amount} ({method}).",
+  sendHeading: "Transfer",
+  sendText: "Send balance directly to another account by email.",
+  receiverEmailLabel: "Recipient account email",
+  receiverEmailPlaceholder: "receiver@example.com",
+  sendAmountLabel: "Transfer Amount",
+  sendAmountPlaceholder: "For example, 2500",
+  sendSubmitButton: "Transfer",
+  sendBalanceHint: "Current balance: {balance}",
+  transferInsufficientBalance: "Insufficient balance for transfer.",
+  transferRequiresAuth: "You need to sign in to make a transfer.",
+  transferSentSuccess: "Transfer sent successfully.",
+  transferReceivedTitle: "Balance transfer received",
+  transferReceivedText: "{sender} sent you {amount}.",
+  transferSentTitle: "Balance transfer sent",
+  transferSentText: "You sent {amount} to {email}.",
+  walletInfo: "Balance: {balance}. Today's spending: -{spent}.",
+  loginSuccess: "Signed in successfully.",
+  signupSuccess: "Registration completed successfully.",
+  logoutSuccess: "You have logged out.",
+  ticketSaved: "Ticket saved.",
+  ticketArchived: "Ticket moved to history.",
+  supportInfo: "Support will be available soon.",
+  passwordMismatch: "Passwords do not match.",
+  fillRequired: "Please fill in all fields.",
+  authFallback: "The full Supabase publishable key is not set, local mode is being used.",
+  ticketCodeLabel: "Code",
+  unknownError: "Something went wrong. Please try again."
+};
+
+TRANSLATIONS.zh = {
+  ...TRANSLATIONS.en,
+  onayPageTitle: "购票",
+  signInPageTitle: "登录",
+  signUpPageTitle: "注册",
+  adminPageTitle: "余额管理",
+  myTicketsPageTitle: "我的车票",
+  historyPageTitle: "车票历史",
+  plusPageTitle: "更多",
+  sendPayPageTitle: "转账",
+  langEn: "English",
+  langZh: "中文",
+  mainMenuHeading: "主菜单",
+  installSectionTitle: "安装应用",
+  installSectionText: "将 FAKE U 安装到您的 iPhone 或 Android 手机上。",
+  iosInstallPageTitle: "安装 iOS 版本",
+  androidInstallPageTitle: "安装 Android 版本",
+  iosInstallTitle: "安装 iOS",
+  iosInstallText: "查看如何通过 Safari 添加到主屏幕。",
+  androidInstallTitle: "安装 Android",
+  androidInstallText: "下载 FAKEU APK 并直接安装。",
+  iosInstallLead: "您可以通过 Safari 和“添加到主屏幕”将 FAKE U 安装到 iPhone 上。",
+  iosStep1Title: "在 Safari 中打开",
+  iosStep1Text: "请务必在 Safari 浏览器中打开本站。",
+  iosStep2Title: "点击分享",
+  iosStep2Text: "点击底部工具栏中的分享按钮。",
+  iosStep3Title: "添加到主屏幕",
+  iosStep3Text: "选择“添加到主屏幕”并确认安装。",
+  androidInstallLead: "下载 APK 文件并直接安装到您的 Android 设备上。",
+  androidInstallHint: "如果浏览器出现警告，请开启“安装未知应用”权限。",
+  androidInstallButton: "安装 FAKEU APK",
+  onayCardText: "快速购买公交车票",
+  disabledCardText: "该服务暂时不可用",
+  accountTitle: "账户信息",
+  accountText: "这里显示您的主要账户信息",
+  accountNameLabel: "姓名",
+  accountEmailLabel: "电子邮件",
+  accountRoleLabel: "角色",
+  accountBalanceLabel: "余额",
+  guestRole: "访客",
+  userRole: "用户",
+  adminRole: "管理员",
+  signUpTab: "注册",
+  signInTab: "登录",
+  logoutButton: "退出",
+  myTicketsButton: "我的车票",
+  exitFullscreenButton: "退出",
+  fullscreenHint: "此模式会隐藏多余的浏览器栏。顶部系统状态栏是否可见取决于设备。",
+  backLabel: "← 返回",
+  signInHeading: "登录账户",
+  signInText: "余额和车票历史将保存到您的账户中",
+  signUpHeading: "注册账户",
+  signUpText: "余额和车票历史将保存到您的账户中",
+  nameField: "账户名称",
+  passwordField: "密码",
+  confirmPasswordField: "重复密码",
+  namePlaceholder: "例如：Name",
+  passwordPlaceholder: "至少 6 个字符",
+  confirmPasswordPlaceholder: "再次输入密码",
+  signInAction: "登录",
+  signUpAction: "注册",
+  adminHeading: "余额管理",
+  adminText: "管理通过 Supabase 注册用户的余额。",
+  adminStateLoading: "正在检查访问权限...",
+  adminNeedsSupabase: "此页面仅在 Supabase 模式下可用。请先添加完整的 Supabase publishable key。",
+  adminOnly: "此部分仅对管理员账户开放。",
+  adminReady: "管理员模式已启用。请选择用户并管理账户。",
+  adminLookupHeading: "查询余额",
+  adminLookupText: "通过邮箱或账户名查找用户。",
+  adminLookupButton: "查询余额",
+  adminLookupTitle: "找到的账户",
+  adminLookupSuccess: "账户已找到。",
+  adminLookupNotFound: "未找到匹配的账户。",
+  adminBalanceText: "查找用户并更新余额。",
+  adminAdjustHeading: "增加或扣减余额",
+  adminAdjustText: "仅向该用户余额增加金额或从中扣减金额。",
+  adminAdjustModeLabel: "操作",
+  adminAdjustAdd: "增加",
+  adminAdjustSubtract: "扣减",
+  adminAdjustAmountLabel: "金额",
+  adminAdjustButton: "应用",
+  adminAdjustUpdated: "余额变更已成功应用。",
+  adminDiscountHeading: "设置折扣",
+  adminDiscountText: "为所选账户设置 0% 到 100% 的车票折扣。",
+  adminDiscountButton: "保存折扣",
+  adminDiscountUpdated: "折扣更新成功。",
+  adminRoleGrantHeading: "授予管理员角色",
+  adminRoleGrantText: "为此账户授予管理员工具访问权限。",
+  adminRoleGrantButton: "授予管理员角色",
+  adminRoleGranted: "管理员角色已授予。",
+  targetEmailLabel: "查找用户",
+  targetEmailPlaceholder: "邮箱或账户名称",
+  balanceAmountLabel: "新余额",
+  balanceAmountPlaceholder: "5000",
+  adminSubmitButton: "更新余额",
+  adminResultTitle: "已更新账户",
+  adminBalanceUpdated: "余额更新成功。",
+  discountRateLabel: "折扣",
+  adminSearchNoResults: "未找到结果",
+  notificationsButton: "通知",
+  notificationsTitle: "最近动态",
+  notificationsEmpty: "暂无新通知",
+  reloadButton: "刷新",
+  buyTicketHeading: "购票",
+  buyTicketText: "输入交通类型、路线和编号",
+  ticketPriceNotice: "余额充值满 1500 ₸+，即可用 10 ₸ 购买原价 100 ₸ 的车票。（系统会自动发放 90% 折扣，充值金额将在 1-10 分钟内到账）。",
+  ticketDiscountNotice: "您的折扣：{discount}%。当前票价：{price}。",
+  insufficientBalanceNotice: "余额不足。购票至少需要 100 ₸。",
+  currentBalanceNotice: "当前余额：{balance}",
+  insufficientBalanceToast: "余额不足，无法购票。",
+  historyLink: "车票历史",
+  historyLinkShort: "历史",
+  myTicketsLinkShort: "车票",
+  transportTypeLabel: "交通类型",
+  busOption: "公交车",
+  trolleyOption: "无轨电车",
+  directionLabel: "公交路线",
+  directionPlaceholder: "例如：49",
+  busNumberLabel: "车辆号码",
+  busNumberPlaceholder: "例如：123ABC02",
+  confirmButton: "确认",
+  myTicketsHeading: "我的车票",
+  myTicketsEmpty: "暂无有效车票",
+  historyHeading: "车票历史",
+  historySubheading: "通过 ONAY 购买的车票会保存在这里",
+  historyEmpty: "暂无车票历史",
+  todayText: "今天",
+  ticketSubtitle: "阿拉木图，电子车票",
+  directionShort: "路线",
+  transportShort: "交通",
+  timeLabel: "时间",
+  priceLabel: "价格",
+  checkCodeLabel: "校验码",
+  qrRouteLabel: "路线：",
+  qrPurchaseTimeLabel: "购买时间",
+  supportButton: "客服支持",
+  archiveButton: "移至历史",
+  plusHeading: "支付方式",
+  plusText: "请选择您需要的支付方式。每个部分都在单独页面中打开。",
+  openPaymentButton: "前往支付",
+  backToPaymentsButton: "返回支付方式",
+  returnHomeButton: "返回首页",
+  freedomCardLabel: "银行卡号",
+  freedomCardHint: "复制后即可转账",
+  copyCardSuccess: "卡号已复制。",
+  cardOwnerLabel: "持卡人",
+  transferAmountLabel: "转账金额",
+  transferAmountPlaceholder: "例如：1000",
+  transferSenderLabel: "转账人姓名或持卡人姓名",
+  transferSenderPlaceholder: "例如：张三 / 张三丰",
+  transferHintText: "完成转账后，请点击确认转账按钮。",
+  transferConfirmButton: "确认转账",
+  transferConfirmed: "✓ 支付已确认，余额将在 1-10 分钟内到账。",
+  transferNotificationTitle: "支付已确认",
+  transferNotificationText: "{email} 账户已充值 {amount}（{method}）。",
+  sendHeading: "转账",
+  sendText: "通过邮箱直接向其他账户发送余额。",
+  receiverEmailLabel: "收款账户邮箱",
+  receiverEmailPlaceholder: "receiver@example.com",
+  sendAmountLabel: "转账金额",
+  sendAmountPlaceholder: "例如：2500",
+  sendSubmitButton: "转账",
+  sendBalanceHint: "当前余额：{balance}",
+  transferInsufficientBalance: "余额不足，无法转账。",
+  transferRequiresAuth: "转账前请先登录。",
+  transferSentSuccess: "转账成功。",
+  transferReceivedTitle: "收到余额转账",
+  transferReceivedText: "{sender} 向您转入了 {amount}。",
+  transferSentTitle: "余额转账已发送",
+  transferSentText: "您已向 {email} 发送 {amount}。",
+  walletInfo: "余额：{balance}。今日支出：-{spent}。",
+  loginSuccess: "登录成功。",
+  signupSuccess: "注册成功。",
+  logoutSuccess: "您已退出登录。",
+  ticketSaved: "车票已保存。",
+  ticketArchived: "车票已移入历史。",
+  supportInfo: "客服支持即将上线。",
+  passwordMismatch: "两次输入的密码不一致。",
+  fillRequired: "请填写所有字段。",
+  authFallback: "尚未设置完整的 Supabase publishable key，当前使用本地模式。",
+  ticketCodeLabel: "代码",
+  unknownError: "出现错误，请重试。"
+};
+
+const SUPPORTED_LANGS = ["kk", "ru", "en", "zh"];
+
 const STORAGE_KEYS = {
   lang: "fakeu-lang",
   localUsers: "fakeu-local-users",
@@ -375,7 +822,7 @@ const STORAGE_KEYS = {
 };
 
 const state = {
-  lang: localStorage.getItem(STORAGE_KEYS.lang) || "kk",
+  lang: SUPPORTED_LANGS.includes(localStorage.getItem(STORAGE_KEYS.lang)) ? localStorage.getItem(STORAGE_KEYS.lang) : "kk",
   session: null,
   user: null,
   profile: { name: "Қонақ", email: "-", balance: 0, role: "guest", ticket_discount_percent: 0 },
@@ -403,11 +850,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function init() {
-  unlockBodyScroll();
   initSupabase();
   enhanceSharedUi();
   bindCommonUi();
   applyLanguage();
+  setupAdminUserAutocomplete();
   await initAuth();
   await refreshTickets();
   await refreshNotifications();
@@ -415,15 +862,6 @@ async function init() {
   renderAccount();
   renderWallet();
   renderNotifications();
-}
-
-function lockBodyScroll() {
-  document.body.classList.add("is-scroll-locked");
-}
-
-function unlockBodyScroll() {
-  document.body.classList.remove("is-scroll-locked");
-  document.body.style.overflow = "";
 }
 
 function initSupabase() {
@@ -443,15 +881,57 @@ function initSupabase() {
 }
 
 function enhanceSharedUi() {
+  ensureLanguageSwitchers();
   ensureNotificationButton();
   ensureToolbarActions();
   ensureNotificationsPanel();
 }
 
+function ensureLanguageSwitchers() {
+  document.querySelectorAll(".lang-switch").forEach((switcher) => {
+    if (switcher.dataset.dropdownReady === "true") return;
+
+    switcher.innerHTML = `
+      <button class="lang-switch-trigger" type="button" data-action="toggle-lang-menu" aria-expanded="false">
+        <span class="lang-switch-icon" aria-hidden="true"><span class="icon-globe"></span></span>
+        <span class="lang-switch-trigger__label">${t(`lang${state.lang.charAt(0).toUpperCase()}${state.lang.slice(1)}`)}</span>
+      </button>
+      <div class="lang-switch-menu" hidden>
+        <button class="lang-option" type="button" data-lang="kk" data-i18n="langKk">${t("langKk")}</button>
+        <button class="lang-option" type="button" data-lang="ru" data-i18n="langRu">${t("langRu")}</button>
+        <button class="lang-option" type="button" data-lang="en" data-i18n="langEn">${t("langEn")}</button>
+        <button class="lang-option" type="button" data-lang="zh" data-i18n="langZh">${t("langZh")}</button>
+      </div>
+    `;
+    switcher.dataset.dropdownReady = "true";
+  });
+}
+
+function getCurrentLanguageLabel() {
+  const map = {
+    kk: t("langKk"),
+    ru: t("langRu"),
+    en: t("langEn"),
+    zh: t("langZh")
+  };
+  return map[state.lang] || map.kk;
+}
+
+function closeLanguageMenus(except = null) {
+  document.querySelectorAll(".lang-switch").forEach((switcher) => {
+    if (except && switcher === except) return;
+    switcher.classList.remove("is-open");
+    const trigger = switcher.querySelector("[data-action='toggle-lang-menu']");
+    const menu = switcher.querySelector(".lang-switch-menu");
+    if (trigger) trigger.setAttribute("aria-expanded", "false");
+    if (menu) menu.hidden = true;
+  });
+}
+
 function ensureNotificationButton() {
   document.querySelectorAll(".header-actions").forEach((actions) => {
     if (actions.querySelector("[data-action='notifications']")) return;
-    const plusButton = actions.querySelector("a[href='plus.html'], a[href=\"plus.html\"]");
+    const walletButton = actions.querySelector("[data-action='wallet']");
     const button = document.createElement("button");
     button.className = "icon-button notification-trigger";
     button.type = "button";
@@ -461,8 +941,8 @@ function ensureNotificationButton() {
       <span class="icon-bell" aria-hidden="true"></span>
       <span class="notification-badge" data-notification-badge hidden>0</span>
     `;
-    if (plusButton?.nextSibling) {
-      actions.insertBefore(button, plusButton.nextSibling);
+    if (walletButton) {
+      actions.insertBefore(button, walletButton);
     } else {
       actions.appendChild(button);
     }
@@ -517,9 +997,7 @@ function bindCommonUi() {
       state.lang = button.dataset.lang;
       localStorage.setItem(STORAGE_KEYS.lang, state.lang);
       applyLanguage();
-      if (state.profile.role !== "user") {
-        state.profile = guestProfile();
-      }
+      closeLanguageMenus();
       renderAccount();
       renderWallet();
       renderTickets();
@@ -536,8 +1014,23 @@ function bindCommonUi() {
     });
   });
 
+  document.querySelectorAll("[data-action='toggle-lang-menu']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const switcher = button.closest(".lang-switch");
+      const menu = switcher?.querySelector(".lang-switch-menu");
+      if (!switcher || !menu) return;
+      const opening = !switcher.classList.contains("is-open");
+      closeLanguageMenus(opening ? switcher : null);
+      switcher.classList.toggle("is-open", opening);
+      menu.hidden = !opening;
+      button.setAttribute("aria-expanded", opening ? "true" : "false");
+    });
+  });
+
   document.querySelectorAll("[data-action='wallet']").forEach((button) => {
-    button.addEventListener("click", () => showToast(getWalletToastMessage()));
+    button.addEventListener("click", () => {
+      navigateTo("plus.html");
+    });
   });
 
   document.querySelectorAll("[data-action='fullscreen']").forEach((button) => {
@@ -590,14 +1083,21 @@ function bindCommonUi() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
+      closeLanguageMenus();
       closeAccountPanel();
       closeNotificationsPanel();
       closeQrPanel();
     }
   });
 
+  document.addEventListener("click", (event) => {
+    const switcher = event.target.closest(".lang-switch");
+    if (!switcher) {
+      closeLanguageMenus();
+    }
+  });
+
   document.addEventListener("fullscreenchange", syncFullscreenUi);
-  window.addEventListener("pagehide", unlockBodyScroll);
 }
 
 async function initAuth() {
@@ -627,19 +1127,10 @@ async function initAuth() {
 }
 
 async function handleSessionChange(session) {
-  const nextUserId = session?.user?.id || state.user?.id || null;
-  const previousRole = nextUserId ? (loadProfileCache()[nextUserId]?.role || state.profile.role) : state.profile.role;
   state.session = session;
   state.user = session?.user || null;
   if (state.user) {
     state.profile = await resolveProfile(state.user);
-    if (state.profile.role === "admin" && previousRole !== "admin") {
-      await addActivity({
-        title: t("activityAdminRoleTitle"),
-        body: t("activityAdminRoleText"),
-        type: "role"
-      });
-    }
   } else {
     state.profile = guestProfile();
   }
@@ -655,9 +1146,11 @@ function bindPageSpecificUi() {
   document.getElementById("ticketForm")?.addEventListener("submit", handleTicketSubmit);
   document.getElementById("adminLookupForm")?.addEventListener("submit", handleAdminLookupSubmit);
   document.getElementById("adminBalanceForm")?.addEventListener("submit", handleAdminBalanceSubmit);
+  document.getElementById("adminAdjustForm")?.addEventListener("submit", handleAdminAdjustSubmit);
   document.getElementById("adminDiscountForm")?.addEventListener("submit", handleAdminDiscountSubmit);
-  document.getElementById("adminDiscountResetForm")?.addEventListener("submit", handleAdminDiscountResetSubmit);
+  document.getElementById("adminRoleGrantForm")?.addEventListener("submit", handleAdminRoleGrantSubmit);
   document.getElementById("sendBalanceForm")?.addEventListener("submit", handleSendBalanceSubmit);
+  setupAdminUserAutocomplete();
   document.querySelectorAll("[data-payment-confirm-form]").forEach((form) => {
     form.addEventListener("submit", handlePaymentConfirmSubmit);
   });
@@ -706,6 +1199,10 @@ function applyLanguage() {
   document.documentElement.lang = state.lang;
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.lang === state.lang);
+  });
+
+  document.querySelectorAll(".lang-switch-trigger__label").forEach((node) => {
+    node.textContent = getCurrentLanguageLabel();
   });
 
   document.querySelectorAll("[data-i18n]").forEach((node) => {
@@ -803,8 +1300,13 @@ async function handleSignin(event) {
 
   try {
     if (state.supabaseMode) {
-      const { error } = await state.supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      const session = data?.session || (await state.supabase.auth.getSession()).data.session;
+      if (!session) {
+        throw new Error(t("unknownError"));
+      }
+      await handleSessionChange(session);
     } else {
       const user = loadLocalUsers().find((item) => item.email === email && item.password === password);
       if (!user) {
@@ -862,6 +1364,10 @@ async function handleSignup(event) {
       if (data?.user) {
         await bootstrapSupabaseProfile(data.user, { name, email });
       }
+      const session = data?.session || (await state.supabase.auth.getSession()).data.session;
+      if (session) {
+        await handleSessionChange(session);
+      }
     } else {
       const users = loadLocalUsers();
       if (users.some((user) => user.email === email)) {
@@ -887,7 +1393,7 @@ async function handleSignup(event) {
       renderWallet();
     }
     showToast(t("signupSuccess"));
-    navigateTo("homepage.html");
+    navigateTo(state.supabaseMode && !state.session ? "signin.html" : "homepage.html");
   } catch (error) {
     console.error(error);
     showToast(error.message || t("unknownError"));
@@ -1193,14 +1699,12 @@ function openQrPanel(ticket) {
   document.getElementById("qrCheckCode").textContent = ticket.checkCode;
   drawPseudoQr(document.getElementById("qrCanvas"), ticket.qrSeed);
   panel.hidden = false;
-  lockBodyScroll();
 }
 
 function closeQrPanel() {
   const panel = document.getElementById("qrPanel");
   if (!panel) return;
   panel.hidden = true;
-  unlockBodyScroll();
 }
 
 function toggleNotificationsPanel() {
@@ -1353,6 +1857,200 @@ function getRoleLabel(role) {
   return t("guestRole");
 }
 
+function setupAdminUserAutocomplete() {
+  if (document.body.dataset.page !== "admin") return;
+
+  document.querySelectorAll("[data-admin-user-search]").forEach((input) => {
+    if (input.dataset.autocompleteReady === "true") return;
+    input.dataset.autocompleteReady = "true";
+
+    const field = input.closest(".admin-search-field");
+    const results = field?.querySelector(".admin-search-results");
+    if (!results) return;
+
+    const runSearch = async () => {
+      const query = String(input.value || "").trim();
+
+      if (!query || state.profile.role !== "admin") {
+        results.hidden = true;
+        results.innerHTML = "";
+        return;
+      }
+
+      const requestId = String(Number(input.dataset.requestId || 0) + 1);
+      input.dataset.requestId = requestId;
+
+      const profiles = await searchAdminProfiles(query);
+      if (input.dataset.requestId !== requestId) return;
+
+      renderAdminSearchResults(input, results, profiles);
+    };
+
+    input.addEventListener("input", () => {
+      delete input.dataset.selectedEmail;
+      delete input.dataset.selectedName;
+      clearTimeout(input._adminSearchTimer);
+      input._adminSearchTimer = window.setTimeout(runSearch, 180);
+    });
+
+    input.addEventListener("focus", () => {
+      if (String(input.value || "").trim()) {
+        runSearch().catch(console.error);
+      }
+    });
+
+    input.addEventListener("blur", () => {
+      window.setTimeout(() => {
+        results.hidden = true;
+      }, 140);
+    });
+  });
+}
+
+function renderAdminSearchResults(input, results, profiles) {
+  if (!profiles.length) {
+    results.innerHTML = `<div class="admin-search-empty">${escapeHtml(t("adminSearchNoResults"))}</div>`;
+    results.hidden = false;
+    return;
+  }
+
+  results.innerHTML = profiles
+    .map(
+      (profile) => `
+        <button class="admin-search-item" type="button" data-email="${escapeHtml(profile.email || "-")}" data-name="${escapeHtml(profile.name || "-")}">
+          <strong>${escapeHtml(profile.name || "-")}</strong>
+          <span>${escapeHtml(profile.email || "-")}</span>
+        </button>
+      `
+    )
+    .join("");
+
+  results.querySelectorAll(".admin-search-item").forEach((button) => {
+    const applySelection = () => {
+      input.value = button.dataset.email || "";
+      input.dataset.selectedEmail = button.dataset.email || "";
+      input.dataset.selectedName = button.dataset.name || "";
+      results.hidden = true;
+    };
+
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      applySelection();
+    });
+
+    button.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+    });
+
+    button.addEventListener("click", applySelection);
+  });
+
+  results.hidden = false;
+}
+
+async function searchAdminProfiles(query) {
+  const value = String(query || "").trim().toLowerCase();
+  if (!value) return [];
+
+  if (state.supabaseMode && state.supabase && state.profile.role === "admin") {
+    try {
+      const { data, error } = await state.supabase.rpc("admin_search_profiles", {
+        search_query: value
+      });
+      if (error) throw error;
+      const mapped = (Array.isArray(data) ? data : [])
+        .map((profile) => ({
+          id: profile.id,
+          name: profile.name || "-",
+          email: profile.email || "-",
+          balance: Number(profile.balance || 0),
+          role: String(profile.role || "user").toLowerCase(),
+          ticket_discount_percent: getTicketDiscountPercent(profile)
+        }))
+        .slice(0, 8);
+      if (mapped.length) {
+        return mapped;
+      }
+    } catch (error) {
+      console.error("admin search failed", error);
+    }
+
+    if (value.includes("@")) {
+      try {
+        const { data, error } = await state.supabase.rpc("admin_get_user_profile", {
+          target_user_email: value
+        });
+        if (!error) {
+          const profile = Array.isArray(data) ? data[0] : data;
+          if (profile) {
+            return [{
+              id: profile.id,
+              name: profile.name || "-",
+              email: profile.email || "-",
+              balance: Number(profile.balance || 0),
+              role: String(profile.role || "user").toLowerCase(),
+              ticket_discount_percent: getTicketDiscountPercent(profile)
+            }];
+          }
+        }
+      } catch (error) {
+        console.error("admin exact lookup failed", error);
+      }
+    }
+  }
+
+  const cacheProfiles = Object.entries(loadProfileCache()).map(([id, profile]) => ({
+    id,
+    name: profile?.name || "-",
+    email: profile?.email || "-",
+    balance: Number(profile?.balance || 0),
+    role: String(profile?.role || "user").toLowerCase(),
+    ticket_discount_percent: getTicketDiscountPercent(profile)
+  }));
+
+  const localProfiles = loadLocalUsers()
+    .filter((user) => {
+      const name = String(user.name || "").toLowerCase();
+      const email = String(user.email || "").toLowerCase();
+      return name.includes(value) || email.includes(value);
+    })
+    .slice(0, 8)
+    .map((user) => toProfile(user, true));
+
+  const merged = [...cacheProfiles, ...localProfiles]
+    .filter((profile) => {
+      const name = String(profile.name || "").toLowerCase();
+      const email = String(profile.email || "").toLowerCase();
+      return name.includes(value) || email.includes(value);
+    })
+    .filter((profile, index, list) => {
+      const email = String(profile.email || "").toLowerCase();
+      return list.findIndex((item) => String(item.email || "").toLowerCase() === email) === index;
+    })
+    .slice(0, 8);
+
+  return merged;
+}
+
+async function resolveAdminTargetEmail(rawValue) {
+  const value = String(rawValue || "").trim();
+  if (!value) return "";
+
+  if (value.includes("@")) {
+    return value;
+  }
+
+  const profiles = await searchAdminProfiles(value);
+  if (!profiles.length) return "";
+
+  const lowered = value.toLowerCase();
+  const exactMatch = profiles.find((profile) => {
+    return String(profile.email || "").toLowerCase() === lowered || String(profile.name || "").toLowerCase() === lowered;
+  });
+
+  return String((exactMatch || profiles[0]).email || "");
+}
+
 function renderAdminLinks() {
   const isAdmin = state.profile.role === "admin";
   document.querySelectorAll("[data-admin-link]").forEach((link) => {
@@ -1365,11 +2063,12 @@ function renderAdminPage() {
 
   const lookupForm = document.getElementById("adminLookupForm");
   const form = document.getElementById("adminBalanceForm");
+  const adjustForm = document.getElementById("adminAdjustForm");
   const discountForm = document.getElementById("adminDiscountForm");
-  const discountResetForm = document.getElementById("adminDiscountResetForm");
+  const roleForm = document.getElementById("adminRoleGrantForm");
   const stateNode = document.getElementById("adminState");
   const resultBlock = document.getElementById("adminResultBlock");
-  if (!form || !lookupForm || !discountForm || !discountResetForm || !stateNode) return;
+  if (!form || !lookupForm || !adjustForm || !discountForm || !roleForm || !stateNode) return;
 
   let message = t("adminReady");
   let disabled = false;
@@ -1383,7 +2082,7 @@ function renderAdminPage() {
   }
 
   stateNode.textContent = message;
-  [...lookupForm.querySelectorAll("input, button"), ...form.querySelectorAll("input, button"), ...discountForm.querySelectorAll("input, button"), ...discountResetForm.querySelectorAll("input, button")].forEach((node) => {
+  [...lookupForm.querySelectorAll("input, button, select"), ...form.querySelectorAll("input, button, select"), ...adjustForm.querySelectorAll("input, button, select"), ...discountForm.querySelectorAll("input, button, select"), ...roleForm.querySelectorAll("input, button, select")].forEach((node) => {
     node.disabled = disabled;
   });
 
@@ -1406,12 +2105,18 @@ async function handleAdminBalanceSubmit(event) {
   }
 
   const formData = new FormData(event.currentTarget);
-  const targetEmail = String(formData.get("target_email") || "").trim();
+  const rawTarget = String(formData.get("target_email") || "").trim();
+  const targetEmail = await resolveAdminTargetEmail(rawTarget);
   const rawBalance = String(formData.get("new_balance") || "").trim();
   const newBalance = Number(rawBalance);
 
-  if (!targetEmail || rawBalance === "") {
+  if (!rawTarget || rawBalance === "") {
     showToast(t("fillRequired"));
+    return;
+  }
+
+  if (!targetEmail) {
+    showToast(t("adminLookupNotFound"));
     return;
   }
 
@@ -1466,6 +2171,103 @@ async function handleAdminBalanceSubmit(event) {
   }
 }
 
+async function handleAdminAdjustSubmit(event) {
+  event.preventDefault();
+
+  if (!state.supabaseMode) {
+    showToast(t("adminNeedsSupabase"));
+    return;
+  }
+
+  if (state.profile.role !== "admin") {
+    showToast(t("adminOnly"));
+    return;
+  }
+
+  const formData = new FormData(event.currentTarget);
+  const rawTarget = String(formData.get("target_email") || "").trim();
+  const targetEmail = await resolveAdminTargetEmail(rawTarget);
+  const adjustMode = String(formData.get("adjust_mode") || "").trim();
+  const rawAmount = String(formData.get("adjust_amount") || "").trim();
+  const amount = Number(rawAmount);
+
+  if (!rawTarget || rawAmount === "") {
+    showToast(t("fillRequired"));
+    return;
+  }
+
+  if (!targetEmail) {
+    showToast(t("adminLookupNotFound"));
+    return;
+  }
+
+  if (!["add", "subtract"].includes(adjustMode) || !Number.isFinite(amount) || amount <= 0) {
+    showToast(t("unknownError"));
+    return;
+  }
+
+  try {
+    const { data: lookupData, error: lookupError } = await state.supabase.rpc("admin_get_user_profile", {
+      target_user_email: targetEmail
+    });
+
+    if (lookupError) throw lookupError;
+
+    const foundProfile = Array.isArray(lookupData) ? lookupData[0] : lookupData;
+    if (!foundProfile) {
+      throw new Error(t("adminLookupNotFound"));
+    }
+
+    const currentBalance = Number(foundProfile.balance || 0);
+    const nextBalance = adjustMode === "add"
+      ? currentBalance + amount
+      : Math.max(0, currentBalance - amount);
+
+    const { data, error } = await state.supabase.rpc("admin_set_user_balance", {
+      target_user_email: targetEmail,
+      new_balance: nextBalance
+    });
+    if (error) throw error;
+
+    const updated = Array.isArray(data) ? data[0] : data;
+    if (!updated) {
+      throw new Error(t("unknownError"));
+    }
+
+    if (updated.id) {
+      const cache = loadProfileCache();
+      cache[updated.id] = {
+        name: updated.name || "-",
+        email: updated.email || "-",
+        balance: Number(updated.balance || 0),
+        role: String(updated.role || "user").toLowerCase(),
+        ticket_discount_percent: getTicketDiscountPercent(updated)
+      };
+      localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
+    }
+
+    renderAdminResult(updated, "adminResultTitle");
+
+    if (state.user?.email && String(state.user.email).toLowerCase() === String(updated.email || "").toLowerCase()) {
+      state.profile = {
+        ...state.profile,
+        balance: Number(updated.balance || 0),
+        role: String(updated.role || state.profile.role || "user").toLowerCase(),
+        ticket_discount_percent: getTicketDiscountPercent(updated)
+      };
+      renderAccount();
+      renderWallet();
+      await refreshNotifications();
+    }
+
+    showToast(t("adminAdjustUpdated"));
+    event.currentTarget.reset();
+  } catch (error) {
+    console.error(error);
+    showToast(error.message || t("unknownError"));
+  }
+}
+
 async function handleAdminLookupSubmit(event) {
   event.preventDefault();
 
@@ -1480,10 +2282,16 @@ async function handleAdminLookupSubmit(event) {
   }
 
   const formData = new FormData(event.currentTarget);
-  const targetEmail = String(formData.get("target_email") || "").trim();
+  const rawTarget = String(formData.get("target_email") || "").trim();
+  const targetEmail = await resolveAdminTargetEmail(rawTarget);
+
+  if (!rawTarget) {
+    showToast(t("fillRequired"));
+    return;
+  }
 
   if (!targetEmail) {
-    showToast(t("fillRequired"));
+    showToast(t("adminLookupNotFound"));
     return;
   }
 
@@ -1532,17 +2340,30 @@ async function handleAdminDiscountSubmit(event) {
   }
 
   const formData = new FormData(event.currentTarget);
-  const targetEmail = String(formData.get("target_email") || "").trim();
+  const rawTarget = String(formData.get("target_email") || "").trim();
+  const targetEmail = await resolveAdminTargetEmail(rawTarget);
+  const rawDiscount = String(formData.get("ticket_discount_percent") || "").trim();
+  const discountPercent = Number(rawDiscount);
+
+  if (!rawTarget || rawDiscount === "") {
+    showToast(t("fillRequired"));
+    return;
+  }
 
   if (!targetEmail) {
-    showToast(t("fillRequired"));
+    showToast(t("adminLookupNotFound"));
+    return;
+  }
+
+  if (!Number.isFinite(discountPercent) || discountPercent < 0 || discountPercent > 100) {
+    showToast(t("unknownError"));
     return;
   }
 
   try {
     const { data, error } = await state.supabase.rpc("admin_set_user_ticket_discount", {
       target_user_email: targetEmail,
-      new_ticket_discount_percent: 90
+      new_ticket_discount_percent: discountPercent
     });
     if (error) throw error;
 
@@ -1566,17 +2387,18 @@ async function handleAdminDiscountSubmit(event) {
     renderAdminResult(updated, "adminResultTitle");
 
     if (state.user?.email && String(state.user.email).toLowerCase() === String(updated.email || "").toLowerCase()) {
+      const nextDiscount = getTicketDiscountPercent(updated);
       state.profile = {
         ...state.profile,
         balance: Number(updated.balance || state.profile.balance || 0),
         role: String(updated.role || state.profile.role || "user").toLowerCase(),
-        ticket_discount_percent: getTicketDiscountPercent(updated)
+        ticket_discount_percent: nextDiscount
       };
       try {
         await state.supabase.auth.updateUser({
           data: {
             ...(state.user.user_metadata || {}),
-            ticket_discount_percent: getTicketDiscountPercent(updated)
+            ticket_discount_percent: nextDiscount
           }
         });
       } catch (metadataError) {
@@ -1595,7 +2417,7 @@ async function handleAdminDiscountSubmit(event) {
   }
 }
 
-async function handleAdminDiscountResetSubmit(event) {
+async function handleAdminRoleGrantSubmit(event) {
   event.preventDefault();
 
   if (!state.supabaseMode) {
@@ -1609,17 +2431,23 @@ async function handleAdminDiscountResetSubmit(event) {
   }
 
   const formData = new FormData(event.currentTarget);
-  const targetEmail = String(formData.get("target_email") || "").trim();
+  const rawTarget = String(formData.get("target_email") || "").trim();
+  const targetEmail = await resolveAdminTargetEmail(rawTarget);
 
-  if (!targetEmail) {
+  if (!rawTarget) {
     showToast(t("fillRequired"));
     return;
   }
 
+  if (!targetEmail) {
+    showToast(t("adminLookupNotFound"));
+    return;
+  }
+
   try {
-    const { data, error } = await state.supabase.rpc("admin_set_user_ticket_discount", {
+    const { data, error } = await state.supabase.rpc("admin_set_user_role", {
       target_user_email: targetEmail,
-      new_ticket_discount_percent: 0
+      new_role: "admin"
     });
     if (error) throw error;
 
@@ -1635,7 +2463,7 @@ async function handleAdminDiscountResetSubmit(event) {
         email: updated.email || "-",
         balance: Number(updated.balance || 0),
         role: String(updated.role || "user").toLowerCase(),
-        ticket_discount_percent: 0
+        ticket_discount_percent: getTicketDiscountPercent(updated)
       };
       localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
     }
@@ -1645,24 +2473,15 @@ async function handleAdminDiscountResetSubmit(event) {
     if (state.user?.email && String(state.user.email).toLowerCase() === String(updated.email || "").toLowerCase()) {
       state.profile = {
         ...state.profile,
-        ticket_discount_percent: 0
+        role: "admin"
       };
-      try {
-        await state.supabase.auth.updateUser({
-          data: {
-            ...(state.user.user_metadata || {}),
-            ticket_discount_percent: 0
-          }
-        });
-      } catch (metadataError) {
-        console.error("Auth metadata discount reset failed", metadataError);
-      }
       renderAccount();
+      renderAdminLinks();
       renderWallet();
       await refreshNotifications();
     }
 
-    showToast(t("adminDiscountRemoved"));
+    showToast(t("adminRoleGranted"));
     event.currentTarget.reset();
   } catch (error) {
     console.error(error);
