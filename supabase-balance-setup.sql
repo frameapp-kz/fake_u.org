@@ -29,10 +29,39 @@ create table if not exists public.notifications (
   created_at timestamptz not null default timezone('utc', now())
 );
 
+create table if not exists public.tickets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  transport_type text not null,
+  direction text not null,
+  bus_number text not null,
+  price_paid numeric(12, 2) not null default 100 check (price_paid >= 0),
+  created_at timestamptz not null default timezone('utc', now())
+);
+
+alter table public.tickets
+  add column if not exists transport_type text;
+
+alter table public.tickets
+  add column if not exists direction text;
+
+alter table public.tickets
+  add column if not exists bus_number text;
+
+alter table public.tickets
+  add column if not exists price_paid numeric(12, 2) not null default 100;
+
+alter table public.tickets
+  add column if not exists created_at timestamptz not null default timezone('utc', now());
+
 create index if not exists notifications_user_created_idx
   on public.notifications (user_id, created_at desc);
 
+create index if not exists tickets_user_created_idx
+  on public.tickets (user_id, created_at desc);
+
 alter table public.notifications enable row level security;
+alter table public.tickets enable row level security;
 
 drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own"
@@ -66,6 +95,20 @@ create policy "notifications_select_own"
 drop policy if exists "notifications_insert_own" on public.notifications;
 create policy "notifications_insert_own"
   on public.notifications
+  for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+drop policy if exists "tickets_select_own" on public.tickets;
+create policy "tickets_select_own"
+  on public.tickets
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "tickets_insert_own" on public.tickets;
+create policy "tickets_insert_own"
+  on public.tickets
   for insert
   to authenticated
   with check (auth.uid() = user_id);
@@ -167,6 +210,245 @@ create trigger on_auth_user_updated_profile
   after update of email, raw_user_meta_data on auth.users
   for each row
   execute function public.sync_profile_from_auth_user();
+
+create or replace function public.get_my_profile()
+returns public.profiles
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  current_profile public.profiles;
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  insert into public.profiles (id, name, email, balance, ticket_discount_percent, role)
+  select
+    au.id,
+    coalesce(au.raw_user_meta_data->>'name', split_part(au.email, '@', 1)),
+    au.email,
+    coalesce(nullif(au.raw_user_meta_data->>'balance', '')::numeric, 0),
+    coalesce(nullif(au.raw_user_meta_data->>'ticket_discount_percent', '')::numeric, 0),
+    case
+      when lower(coalesce(au.raw_user_meta_data->>'role', 'user')) = 'admin' then 'admin'
+      else 'user'
+    end
+  from auth.users au
+  where au.id = auth.uid()
+  on conflict (id) do update
+  set
+    name = coalesce(excluded.name, public.profiles.name),
+    email = excluded.email,
+    updated_at = timezone('utc', now())
+  returning * into current_profile;
+
+  if current_profile.id is null then
+    raise exception 'Profile not found';
+  end if;
+
+  return current_profile;
+end;
+$$;
+
+revoke all on function public.get_my_profile() from public;
+grant execute on function public.get_my_profile() to authenticated;
+
+create or replace function public.get_my_tickets()
+returns table (
+  id uuid,
+  user_id uuid,
+  transport_type text,
+  direction text,
+  bus_number text,
+  price_paid numeric,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  return query
+  select
+    t.id,
+    t.user_id,
+    t.transport_type,
+    t.direction,
+    t.bus_number,
+    t.price_paid,
+    t.created_at
+  from public.tickets t
+  where t.user_id = auth.uid()
+  order by t.created_at desc;
+end;
+$$;
+
+revoke all on function public.get_my_tickets() from public;
+grant execute on function public.get_my_tickets() to authenticated;
+
+create or replace function public.get_my_notifications(limit_count integer default 30)
+returns table (
+  id uuid,
+  user_id uuid,
+  type text,
+  title text,
+  body text,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  return query
+  select
+    n.id,
+    n.user_id,
+    n.type,
+    n.title,
+    n.body,
+    n.created_at
+  from public.notifications n
+  where n.user_id = auth.uid()
+  order by n.created_at desc
+  limit greatest(coalesce(limit_count, 30), 1);
+end;
+$$;
+
+revoke all on function public.get_my_notifications(integer) from public;
+grant execute on function public.get_my_notifications(integer) to authenticated;
+
+create or replace function public.add_my_notification(
+  notification_type text,
+  notification_title text,
+  notification_body text
+)
+returns public.notifications
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  created_notification public.notifications;
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  if notification_title is null or btrim(notification_title) = '' then
+    raise exception 'notification_title is required';
+  end if;
+
+  if notification_body is null or btrim(notification_body) = '' then
+    raise exception 'notification_body is required';
+  end if;
+
+  insert into public.notifications (user_id, type, title, body)
+  values (
+    auth.uid(),
+    coalesce(nullif(btrim(notification_type), ''), 'system'),
+    notification_title,
+    notification_body
+  )
+  returning * into created_notification;
+
+  return created_notification;
+end;
+$$;
+
+revoke all on function public.add_my_notification(text, text, text) from public;
+grant execute on function public.add_my_notification(text, text, text) to authenticated;
+
+create or replace function public.buy_ticket(
+  input_transport_type text,
+  input_direction text,
+  input_bus_number text
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  current_profile public.profiles;
+  created_ticket public.tickets;
+  ticket_price numeric(12, 2);
+begin
+  if auth.uid() is null then
+    raise exception 'Authentication required';
+  end if;
+
+  if input_transport_type is null or btrim(input_transport_type) = '' then
+    raise exception 'input_transport_type is required';
+  end if;
+
+  if input_direction is null or btrim(input_direction) = '' then
+    raise exception 'input_direction is required';
+  end if;
+
+  if input_bus_number is null or btrim(input_bus_number) = '' then
+    raise exception 'input_bus_number is required';
+  end if;
+
+  current_profile := public.get_my_profile();
+  ticket_price := round((100::numeric * ((100 - coalesce(current_profile.ticket_discount_percent, 0)) / 100.0))::numeric, 2);
+
+  if current_profile.balance < ticket_price then
+    raise exception 'Insufficient balance';
+  end if;
+
+  insert into public.tickets (user_id, transport_type, direction, bus_number, price_paid)
+  values (
+    auth.uid(),
+    btrim(input_transport_type),
+    btrim(input_direction),
+    upper(btrim(input_bus_number)),
+    ticket_price
+  )
+  returning * into created_ticket;
+
+  update public.profiles
+  set
+    balance = balance - ticket_price,
+    updated_at = timezone('utc', now())
+  where id = auth.uid()
+  returning * into current_profile;
+
+  insert into public.notifications (user_id, type, title, body)
+  values (
+    auth.uid(),
+    'ticket',
+    'Жаңа билет алынды',
+    btrim(input_direction) || ' бағытына билет алынды. Списано: ' || trim(to_char(ticket_price, 'FM999999990.00')) || ' ₸.'
+  );
+
+  return jsonb_build_object(
+    'ticket',
+    to_jsonb(created_ticket),
+    'profile',
+    jsonb_build_object(
+      'name', current_profile.name,
+      'email', current_profile.email,
+      'balance', current_profile.balance,
+      'role', current_profile.role,
+      'ticket_discount_percent', current_profile.ticket_discount_percent
+    )
+  );
+end;
+$$;
+
+revoke all on function public.buy_ticket(text, text, text) from public;
+grant execute on function public.buy_ticket(text, text, text) to authenticated;
 
 create or replace function public.admin_set_user_balance(
   target_user_email text,
@@ -683,7 +965,7 @@ grant execute on function public.notify_admins_about_payment(text, numeric, text
 -- select public.admin_get_user_profile('user@example.com');
 --
 -- Search users by email or account name:
--- select * from public.admin_search_profiles('elnar');
+-- select * from public.admin_search_profiles('user');
 --
 -- Set any user's ticket discount percent:
 -- select public.admin_set_user_ticket_discount('user@example.com', 40);
