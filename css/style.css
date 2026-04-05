@@ -386,6 +386,14 @@ img {
   box-shadow: 0 0 0 2px rgba(255, 75, 87, 0.16);
 }
 
+.notification-icon-image {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 5px;
+  mix-blend-mode: multiply;
+}
+
 .icon-wallet {
   width: 18px;
   height: 14px;
@@ -480,6 +488,12 @@ img {
   border-radius: 18px;
   color: rgba(255, 255, 255, 0.82);
   background: rgba(255, 255, 255, 0.06);
+}
+
+.lang-switch-icon-image {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .lang-switch-trigger {
@@ -2150,9 +2164,20 @@ body.is-fullscreen-mode::before {
   background: linear-gradient(180deg, #ffd55f, #ffc107);
 }
 
+.install-card__icon-image {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
 .install-card__icon--android {
   color: #eff7ff;
   background: linear-gradient(180deg, #4fa7ff, #2661ff);
+}
+
+.install-card__icon--android .install-card__icon-image {
+  width: 38px;
+  height: 38px;
 }
 
 .install-card__copy {
