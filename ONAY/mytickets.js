@@ -360,13 +360,38 @@ async function fetchAdsJson(url) {
       const jsonStart = text.indexOf("{");
       const jsonEnd = text.lastIndexOf("}");
       const payload = jsonStart >= 0 && jsonEnd > jsonStart ? text.slice(jsonStart, jsonEnd + 1) : text;
-      return JSON.parse(payload);
+      return parseAdsPayload(payload);
     } catch (error) {
       lastError = error;
     }
   }
 
   throw lastError || new Error("Ads config failed");
+}
+
+function parseAdsPayload(payload) {
+  try {
+    return JSON.parse(payload);
+  } catch (error) {
+    const repaired = repairMalformedAdsJson(payload);
+    if (repaired !== payload) {
+      return JSON.parse(repaired);
+    }
+    throw error;
+  }
+}
+
+function repairMalformedAdsJson(payload) {
+  return String(payload || "").replace(
+    /"(\d+_ADD)"\s*:\s*\{\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\}/g,
+    (_match, key, banner, link) => `"${key}": {"Add_Banner": "${escapeJsonString(banner)}", "Add_link": "${escapeJsonString(link)}"}`
+  );
+}
+
+function escapeJsonString(value) {
+  return String(value || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"');
 }
 
 async function loadAdsConfig() {
