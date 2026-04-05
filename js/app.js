@@ -893,7 +893,7 @@ function ensureLanguageSwitchers() {
 
     switcher.innerHTML = `
       <button class="lang-switch-trigger" type="button" data-action="toggle-lang-menu" aria-expanded="false">
-        <span class="lang-switch-icon" aria-hidden="true"><span class="icon-globe"></span></span>
+        <span class="lang-switch-icon" aria-hidden="true"><img class="lang-switch-icon-image" src="img/globe.png" alt=""></span>
         <span class="lang-switch-trigger__label">${t(`lang${state.lang.charAt(0).toUpperCase()}${state.lang.slice(1)}`)}</span>
       </button>
       <div class="lang-switch-menu" hidden>
@@ -938,7 +938,7 @@ function ensureNotificationButton() {
     button.dataset.action = "notifications";
     button.setAttribute("aria-label", t("notificationsButton"));
     button.innerHTML = `
-      <span class="icon-bell" aria-hidden="true"></span>
+      <img class="notification-icon-image" src="img/push.jpg" alt="" aria-hidden="true">
       <span class="notification-badge" data-notification-badge hidden>0</span>
     `;
     if (walletButton) {
@@ -1402,29 +1402,138 @@ async function handleSignup(event) {
 
 async function bootstrapSupabaseProfile(user, overrides = {}) {
   if (!state.supabaseMode || !state.supabase || !user?.id) return null;
+  return null;
+}
 
-  const payload = {
-    id: user.id,
-    name: overrides.name || user.user_metadata?.name || user.email?.split("@")[0] || "User",
-    email: overrides.email || user.email || "-",
-    balance: 0,
-    ticket_discount_percent: 0,
-    role: String(user.user_metadata?.role || "user").toLowerCase() === "admin" ? "admin" : "user"
-  };
+async function fetchOwnProfileDirect() {
+  const { data, error } = await state.supabase
+    .from("profiles")
+    .select("name,email,balance,role,ticket_discount_percent")
+    .eq("id", state.user.id)
+    .maybeSingle();
 
+  if (error) throw error;
+  return data || null;
+}
+
+async function fetchOwnTicketsDirect() {
   try {
     const { data, error } = await state.supabase
-      .from("profiles")
-      .upsert(payload, { onConflict: "id" })
-      .select("name,email,balance,role,ticket_discount_percent")
-      .single();
+      .from("tickets")
+      .select("id,user_id,transport_type,direction,bus_number,price_paid,created_at")
+      .eq("user_id", state.user.id)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data;
+    return data || [];
   } catch (error) {
-    console.warn("profile bootstrap skipped", error);
-    return null;
+    const message = String(error?.message || error || "");
+    if (!message.includes("price_paid")) {
+      throw error;
+    }
+
+    const { data, error: fallbackError } = await state.supabase
+      .from("tickets")
+      .select("id,user_id,transport_type,direction,bus_number,created_at")
+      .eq("user_id", state.user.id)
+      .order("created_at", { ascending: false });
+
+    if (fallbackError) throw fallbackError;
+    return (data || []).map((ticket) => ({
+      ...ticket,
+      price_paid: getCurrentTicketPrice()
+    }));
   }
+}
+
+async function fetchOwnNotificationsDirect() {
+  const { data, error } = await state.supabase
+    .from("notifications")
+    .select("id,user_id,type,title,body,created_at")
+    .eq("user_id", state.user.id)
+    .order("created_at", { ascending: false })
+    .limit(30);
+
+  if (error) throw error;
+  return data || [];
+}
+
+async function addOwnNotificationDirect({ title, body, type = "system" }) {
+  const { error } = await state.supabase
+    .from("notifications")
+    .insert({
+      user_id: state.user.id,
+      type,
+      title,
+      body
+    });
+
+  if (error) throw error;
+}
+
+async function buyTicketDirect(payload, ticketPrice) {
+  const profileData = await fetchOwnProfileDirect();
+  const currentBalance = getBalanceValue(profileData?.balance);
+
+  if (currentBalance < ticketPrice) {
+    throw new Error(t("insufficientBalanceToast"));
+  }
+
+  let insertedTicket = null;
+
+  try {
+    const { data, error: ticketError } = await state.supabase
+      .from("tickets")
+      .insert({
+        user_id: state.user.id,
+        transport_type: payload.transport_type,
+        direction: payload.direction,
+        bus_number: payload.bus_number,
+        price_paid: ticketPrice
+      })
+      .select("id,user_id,transport_type,direction,bus_number,price_paid,created_at")
+      .single();
+
+    if (ticketError) throw ticketError;
+    insertedTicket = data;
+  } catch (error) {
+    const message = String(error?.message || error || "");
+    if (!message.includes("price_paid")) {
+      throw error;
+    }
+
+    const { data, error: fallbackError } = await state.supabase
+      .from("tickets")
+      .insert({
+        user_id: state.user.id,
+        transport_type: payload.transport_type,
+        direction: payload.direction,
+        bus_number: payload.bus_number
+      })
+      .select("id,user_id,transport_type,direction,bus_number,created_at")
+      .single();
+
+    if (fallbackError) throw fallbackError;
+    insertedTicket = {
+      ...data,
+      price_paid: ticketPrice
+    };
+  }
+
+  const nextBalance = Math.max(0, currentBalance - ticketPrice);
+  const { data: updatedProfile, error: profileError } = await state.supabase
+    .from("profiles")
+    .update({ balance: nextBalance })
+    .eq("id", state.user.id)
+    .select("name,email,balance,role,ticket_discount_percent")
+    .single();
+
+  if (profileError) throw profileError;
+
+  return {
+    ticket: insertedTicket,
+    profile: updatedProfile
+  };
 }
 
 async function handleTicketSubmit(event) {
@@ -1463,32 +1572,59 @@ async function handleTicketSubmit(event) {
   localStorage.setItem(STORAGE_KEYS.currentOnayTicket, JSON.stringify(fallbackTicket));
 
   try {
-    let savedTicket = fallbackTicket;
-
     if (state.supabaseMode && state.user) {
-      const { data, error } = await state.supabase
-        .from("tickets")
-        .insert({
-          user_id: state.user.id,
-          transport_type: payload.transport_type,
-          direction: payload.direction,
-          bus_number: payload.bus_number
-        })
-        .select()
-        .single();
+      let result = null;
 
-      if (error) {
-        console.warn("tickets insert failed, using local fallback", error);
-        persistLocalFallbackTicket(fallbackTicket);
-      } else if (data) {
-        savedTicket = { ...data, price_paid: ticketPrice };
-        localStorage.setItem(STORAGE_KEYS.currentOnayTicket, JSON.stringify(savedTicket));
-        state.tickets.unshift(normalizeTicket(savedTicket));
+      try {
+        const { data, error } = await state.supabase.rpc("buy_ticket", {
+          input_transport_type: payload.transport_type,
+          input_direction: payload.direction,
+          input_bus_number: payload.bus_number
+        });
+        if (error) throw error;
+        result = Array.isArray(data) ? data[0] : data;
+      } catch (rpcError) {
+        console.warn("buy_ticket rpc failed, trying direct fallback", rpcError);
+        result = await buyTicketDirect(payload, ticketPrice);
       }
-    } else {
-      persistLocalFallbackTicket(fallbackTicket);
+
+      const savedTicket = result?.ticket || fallbackTicket;
+      const updatedProfile = result?.profile || null;
+
+      localStorage.setItem(STORAGE_KEYS.currentOnayTicket, JSON.stringify(savedTicket));
+      if (updatedProfile) {
+        state.profile = {
+          ...state.profile,
+          name: updatedProfile.name || state.profile.name,
+          email: updatedProfile.email || state.profile.email,
+          balance: getBalanceValue(updatedProfile.balance),
+          role: String(updatedProfile.role || state.profile.role || "user").toLowerCase(),
+          ticket_discount_percent: getTicketDiscountPercent(updatedProfile)
+        };
+
+        const cache = loadProfileCache();
+        cache[state.user.id] = {
+          ...(cache[state.user.id] || {}),
+          name: state.profile.name,
+          email: state.profile.email,
+          balance: state.profile.balance,
+          role: state.profile.role,
+          ticket_discount_percent: state.profile.ticket_discount_percent
+        };
+        localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
+      }
+
+      await refreshTickets();
+      await refreshNotifications();
+      renderAccount();
+      renderWallet();
+      updateOnayPurchaseState();
+      showToast(t("ticketSaved"));
+      navigateTo("ONAY/mytickets.html");
+      return;
     }
 
+    persistLocalFallbackTicket(fallbackTicket);
     await deductTicketBalance(ticketPrice);
     await addActivity({
       title: t("activityTicketTitle"),
@@ -1506,20 +1642,7 @@ async function handleTicketSubmit(event) {
     navigateTo("ONAY/mytickets.html");
   } catch (error) {
     console.error(error);
-    persistLocalFallbackTicket(fallbackTicket);
-    await deductTicketBalance(ticketPrice);
-    await addActivity({
-      title: t("activityTicketTitle"),
-      body: t("activityTicketText")
-        .replace("{direction}", payload.direction)
-        .replace("{price}", formatWalletAmount(ticketPrice)),
-      type: "ticket"
-    });
-    renderAccount();
-    renderWallet();
-    updateOnayPurchaseState();
-    showToast(t("ticketSaved"));
-    navigateTo("ONAY/mytickets.html");
+    showToast(error.message || t("unknownError"));
   }
 }
 
@@ -1566,12 +1689,17 @@ async function refreshTickets() {
 
   if (state.supabaseMode && state.user) {
     try {
-      const { data, error } = await state.supabase
-        .from("tickets")
-        .select("id,user_id,transport_type,direction,bus_number,created_at")
-        .eq("user_id", state.user.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
+      let data = null;
+
+      try {
+        const response = await state.supabase.rpc("get_my_tickets");
+        if (response.error) throw response.error;
+        data = response.data;
+      } catch (rpcError) {
+        console.warn("get_my_tickets rpc failed, trying direct fallback", rpcError);
+        data = await fetchOwnTicketsDirect();
+      }
+
       state.tickets = (data || []).map(normalizeTicket);
     } catch (error) {
       console.error(error);
@@ -1794,22 +1922,28 @@ async function resolveProfile(user) {
 
   if (state.supabaseMode) {
     try {
-      const { data } = await state.supabase
-        .from("profiles")
-        .select("name,email,balance,role,ticket_discount_percent")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (data) {
+      let resolved = null;
+
+      try {
+        const { data, error } = await state.supabase.rpc("get_my_profile");
+        if (error) throw error;
+        resolved = Array.isArray(data) ? data[0] : data;
+      } catch (rpcError) {
+        console.warn("get_my_profile rpc failed, trying direct fallback", rpcError);
+        resolved = await fetchOwnProfileDirect();
+      }
+
+      if (resolved) {
         profile = {
-          name: data.name || user.user_metadata?.name || user.email,
-          email: data.email || user.email,
-          balance: data.balance ?? user.user_metadata?.balance ?? 0,
-          role: String(data.role || "user").toLowerCase(),
-          ticket_discount_percent: getTicketDiscountPercent(data)
+          name: resolved.name || user.user_metadata?.name || user.email,
+          email: resolved.email || user.email,
+          balance: resolved.balance ?? user.user_metadata?.balance ?? 0,
+          role: String(resolved.role || "user").toLowerCase(),
+          ticket_discount_percent: getTicketDiscountPercent(resolved)
         };
       }
     } catch (error) {
-      console.warn("profiles lookup skipped", error);
+      console.warn("profile lookup skipped", error);
     }
   }
 
@@ -2394,16 +2528,6 @@ async function handleAdminDiscountSubmit(event) {
         role: String(updated.role || state.profile.role || "user").toLowerCase(),
         ticket_discount_percent: nextDiscount
       };
-      try {
-        await state.supabase.auth.updateUser({
-          data: {
-            ...(state.user.user_metadata || {}),
-            ticket_discount_percent: nextDiscount
-          }
-        });
-      } catch (metadataError) {
-        console.error("Auth metadata discount update failed", metadataError);
-      }
       renderAccount();
       renderWallet();
       await refreshNotifications();
@@ -2589,25 +2713,6 @@ async function handleSendBalanceSubmit(event) {
         ...state.profile,
         balance: nextBalance
       };
-
-      try {
-        const { data: authData, error: authError } = await state.supabase.auth.updateUser({
-          data: {
-            ...(state.user.user_metadata || {}),
-            balance: nextBalance
-          }
-        });
-
-        if (!authError && authData?.user) {
-          state.user = authData.user;
-          state.session = {
-            ...(state.session || {}),
-            user: authData.user
-          };
-        }
-      } catch (metadataError) {
-        console.error("Auth metadata transfer update failed", metadataError);
-      }
 
       const cache = loadProfileCache();
       if (state.user?.id) {
@@ -2833,14 +2938,19 @@ function seededRandom(initialSeed) {
 async function refreshNotifications() {
   if (state.supabaseMode && state.user?.id) {
     try {
-      const { data, error } = await state.supabase
-        .from("notifications")
-        .select("id,type,title,body,created_at")
-        .eq("user_id", state.user.id)
-        .order("created_at", { ascending: false })
-        .limit(30);
+      let data = null;
 
-      if (error) throw error;
+      try {
+        const response = await state.supabase.rpc("get_my_notifications", {
+          limit_count: 30
+        });
+        if (response.error) throw response.error;
+        data = response.data;
+      } catch (rpcError) {
+        console.warn("get_my_notifications rpc failed, trying direct fallback", rpcError);
+        data = await fetchOwnNotificationsDirect();
+      }
+
       state.notifications = data || [];
       renderNotifications();
       return;
@@ -2904,19 +3014,20 @@ async function addActivity({ title, body, type = "system", userId = state.user?.
 
   if (state.supabaseMode && state.user?.id && userId === state.user.id) {
     try {
-      const { error } = await state.supabase
-        .from("notifications")
-        .insert({
-          user_id: state.user.id,
-          type,
-          title,
-          body
+      try {
+        const { error } = await state.supabase.rpc("add_my_notification", {
+          notification_type: type,
+          notification_title: title,
+          notification_body: body
         });
-
-      if (!error) {
-        await refreshNotifications();
-        return;
+        if (error) throw error;
+      } catch (rpcError) {
+        console.warn("add_my_notification rpc failed, trying direct fallback", rpcError);
+        await addOwnNotificationDirect({ title, body, type });
       }
+
+      await refreshNotifications();
+      return;
     } catch (error) {
       console.warn("notification insert skipped", error);
     }
@@ -3091,8 +3202,6 @@ async function deductTicketBalance(amount) {
   const nextBalance = Math.max(0, getBalanceValue(state.profile.balance) - getBalanceValue(amount || 0));
 
   if (state.supabaseMode && state.user?.id && state.supabase) {
-    let profilePayload = null;
-
     try {
       const { data, error } = await state.supabase
         .from("profiles")
@@ -3103,53 +3212,29 @@ async function deductTicketBalance(amount) {
 
       if (error) throw error;
 
-      if (data) {
-        profilePayload = data;
-      }
+      state.profile = {
+        ...state.profile,
+        name: data?.name || state.profile.name,
+        email: data?.email || state.profile.email,
+        balance: getBalanceValue(data?.balance ?? nextBalance),
+        role: String(data?.role || state.profile.role || "user").toLowerCase(),
+        ticket_discount_percent: getTicketDiscountPercent(data || state.profile)
+      };
+
+      const cache = loadProfileCache();
+      cache[state.user.id] = {
+        ...(cache[state.user.id] || {}),
+        name: state.profile.name,
+        email: state.profile.email,
+        balance: state.profile.balance,
+        role: state.profile.role,
+        ticket_discount_percent: state.profile.ticket_discount_percent
+      };
+      localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
+      return true;
     } catch (error) {
-      console.error("Balance update failed", error);
+      console.warn("direct balance deduction failed", error);
     }
-
-    try {
-      const { data, error } = await state.supabase.auth.updateUser({
-        data: {
-          ...(state.user.user_metadata || {}),
-          balance: nextBalance,
-          ticket_discount_percent: getTicketDiscountPercent(state.profile)
-        }
-      });
-
-      if (!error && data?.user) {
-        state.user = data.user;
-        state.session = {
-          ...(state.session || {}),
-          user: data.user
-        };
-      }
-    } catch (error) {
-      console.error("Auth metadata balance update failed", error);
-    }
-
-    state.profile = {
-      ...state.profile,
-      name: profilePayload?.name || state.profile.name,
-      email: profilePayload?.email || state.profile.email,
-      balance: Number(profilePayload?.balance ?? nextBalance),
-      role: String(profilePayload?.role || state.profile.role || "user").toLowerCase(),
-      ticket_discount_percent: getTicketDiscountPercent(profilePayload || state.profile)
-    };
-
-    const cache = loadProfileCache();
-    cache[state.user.id] = {
-      ...(cache[state.user.id] || {}),
-      name: state.profile.name,
-      email: state.profile.email,
-      balance: state.profile.balance,
-      role: state.profile.role,
-      ticket_discount_percent: state.profile.ticket_discount_percent
-    };
-    localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
-    return true;
   }
 
   if (state.user?.id) {
