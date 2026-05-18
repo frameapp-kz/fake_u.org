@@ -39,6 +39,14 @@ const TRANSLATIONS = {
     onayCardTitle: "ONAY",
     onayCardText: "Автобусқа оңай билет ал",
     kaspiCardTitle: "Kaspi",
+    kaspiAccessModalTitle: "Kaspi қолжетімділігін сатып алу",
+    kaspiAccessModalText: "Kaspi сайтына өту үшін аккаунт балансынан 1000 ₸ шешіледі. Сатып алғаннан кейін бұл аккаунтта мәңгіге жарамды болады.",
+    kaspiAccessConfirmButton: "1000 ₸ төлеу",
+    kaspiAccessCancelButton: "Болдырмау",
+    kaspiAccessPurchased: "Kaspi қолжетімділігі сатып алынды.",
+    kaspiAccessAlreadyOwned: "Kaspi сіздің аккаунтта ашық.",
+    kaspiAccessRequiresAuth: "Kaspi сатып алу үшін аккаунтқа кіріңіз.",
+    kaspiAccessInsufficientBalance: "Баланс жеткіліксіз. Kaspi үшін 1000 ₸ керек.",
     avtobysCardTitle: "Avtobys",
     disabledCardText: "Бұл қосымша уақытша жұмыс істемейді",
     accountTitle: "Аккаунт туралы мәлімет",
@@ -119,10 +127,12 @@ const TRANSLATIONS = {
     activityBalanceTopUpTitle: "Баланс толтырылды",
     activityDiscountTitle: "Жеңілдік берілді",
     activityTicketTitle: "Жаңа билет алынды",
+    activityKaspiTitle: "Kaspi ашылды",
     activityAdminRoleTitle: "Admin рөлі берілді",
     activityBalanceTopUpText: "Балансыңыз {balance} болып жаңартылды.",
     activityDiscountText: "Аккаунтыңызға {discount}% жеңілдік берілді.",
     activityTicketText: "{direction} бағытына билет алынды. Списано: {price}.",
+    activityKaspiText: "Kaspi қолжетімділігі сатып алынды. Списано: {price}.",
     activityAdminRoleText: "Сізге admin мәртебесі берілді.",
     buyTicketHeading: "Билет алу",
     buyTicketText: "Автобус түрін, бағытын және нөмірін енгізіңіз",
@@ -250,6 +260,14 @@ const TRANSLATIONS = {
     onayCardTitle: "ONAY",
     onayCardText: "Купить билет на автобус быстро",
     kaspiCardTitle: "Kaspi",
+    kaspiAccessModalTitle: "Купить доступ к Kaspi",
+    kaspiAccessModalText: "Чтобы перейти на сайт Kaspi, с баланса аккаунта будет списано 1000 ₸. После покупки доступ останется на этом аккаунте навсегда.",
+    kaspiAccessConfirmButton: "Оплатить 1000 ₸",
+    kaspiAccessCancelButton: "Отмена",
+    kaspiAccessPurchased: "Доступ к Kaspi куплен.",
+    kaspiAccessAlreadyOwned: "Kaspi уже открыт на вашем аккаунте.",
+    kaspiAccessRequiresAuth: "Войдите в аккаунт, чтобы купить Kaspi.",
+    kaspiAccessInsufficientBalance: "Недостаточно баланса. Для Kaspi нужно 1000 ₸.",
     avtobysCardTitle: "Avtobys",
     disabledCardText: "Это приложение временно недоступно",
     accountTitle: "Информация об аккаунте",
@@ -330,10 +348,12 @@ const TRANSLATIONS = {
     activityBalanceTopUpTitle: "Баланс пополнен",
     activityDiscountTitle: "Скидка выдана",
     activityTicketTitle: "Куплен новый билет",
+    activityKaspiTitle: "Kaspi открыт",
     activityAdminRoleTitle: "Выдана роль admin",
     activityBalanceTopUpText: "Ваш баланс обновлен до {balance}.",
     activityDiscountText: "Вашему аккаунту выдана скидка {discount}%.",
     activityTicketText: "Куплен билет по маршруту {direction}. Списано: {price}.",
+    activityKaspiText: "Доступ к Kaspi куплен. Списано: {price}.",
     activityAdminRoleText: "Вашему аккаунту назначена роль admin.",
     buyTicketHeading: "Купить билет",
     buyTicketText: "Укажите тип транспорта, направление и номер",
@@ -429,6 +449,16 @@ TRANSLATIONS.en = {
   onayPageTitle: "Buy Ticket",
   signInPageTitle: "Sign In",
   signUpPageTitle: "Sign Up",
+  kaspiAccessModalTitle: "Buy Kaspi Access",
+  kaspiAccessModalText: "To open the Kaspi site, 1000 ₸ will be charged from your account balance. After purchase, access stays on this account forever.",
+  kaspiAccessConfirmButton: "Pay 1000 ₸",
+  kaspiAccessCancelButton: "Cancel",
+  kaspiAccessPurchased: "Kaspi access purchased.",
+  kaspiAccessAlreadyOwned: "Kaspi is already unlocked on your account.",
+  kaspiAccessRequiresAuth: "Sign in to buy Kaspi access.",
+  kaspiAccessInsufficientBalance: "Insufficient balance. Kaspi requires 1000 ₸.",
+  activityKaspiTitle: "Kaspi unlocked",
+  activityKaspiText: "Kaspi access purchased. Charged: {price}.",
   adminPageTitle: "Balance Control",
   myTicketsPageTitle: "My Tickets",
   historyPageTitle: "Ticket History",
@@ -818,6 +848,7 @@ const STORAGE_KEYS = {
   currentOnayTicket: "fakeu-current-onay-ticket",
   usedTickets: "fakeu-used-tickets",
   profileCache: "fakeu-profile-cache",
+  localKaspiAccess: "fakeu-kaspi-access",
   localNotifications: "fakeu-local-notifications"
 };
 
@@ -825,7 +856,7 @@ const state = {
   lang: SUPPORTED_LANGS.includes(localStorage.getItem(STORAGE_KEYS.lang)) ? localStorage.getItem(STORAGE_KEYS.lang) : "kk",
   session: null,
   user: null,
-  profile: { name: "Қонақ", email: "-", balance: 0, role: "guest", ticket_discount_percent: 0 },
+  profile: { name: "Қонақ", email: "-", balance: 0, role: "guest", ticket_discount_percent: 0, kaspi_unlocked: false },
   supabase: null,
   supabaseMode: false,
   pseudoFullscreen: false,
@@ -841,6 +872,10 @@ const config = {
 };
 
 const TICKET_PRICE = 100;
+const KASPI_ACCESS_PRICE = 1000;
+const KASPI_ACCESS_URL = "https://kaspi-fake.vercel.app";
+const PROFILE_SELECT_FIELDS = "name,email,balance,role,ticket_discount_percent,kaspi_unlocked";
+const PROFILE_SELECT_FIELDS_LEGACY = "name,email,balance,role,ticket_discount_percent";
 
 document.addEventListener("DOMContentLoaded", () => {
   init().catch((error) => {
@@ -885,6 +920,7 @@ function enhanceSharedUi() {
   ensureNotificationButton();
   ensureToolbarActions();
   ensureNotificationsPanel();
+  ensureKaspiPurchaseModal();
 }
 
 function ensureLanguageSwitchers() {
@@ -991,6 +1027,31 @@ function ensureNotificationsPanel() {
   document.body.appendChild(panel);
 }
 
+function ensureKaspiPurchaseModal() {
+  if (document.getElementById("kaspiAccessModal")) return;
+
+  const modal = document.createElement("div");
+  modal.className = "kaspi-access-modal";
+  modal.id = "kaspiAccessModal";
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="kaspi-access-card">
+      <div class="kaspi-access-card__icon" aria-hidden="true">
+        <img src="img/kaspi.png" alt="">
+      </div>
+      <div class="kaspi-access-card__copy">
+        <h2 data-i18n="kaspiAccessModalTitle">${t("kaspiAccessModalTitle")}</h2>
+        <p data-i18n="kaspiAccessModalText">${t("kaspiAccessModalText")}</p>
+      </div>
+      <div class="kaspi-access-card__actions">
+        <button class="secondary-button secondary-button--ghost" type="button" data-action="cancel-kaspi-access" data-i18n="kaspiAccessCancelButton">${t("kaspiAccessCancelButton")}</button>
+        <button class="primary-button" type="button" data-action="confirm-kaspi-access" data-i18n="kaspiAccessConfirmButton">${t("kaspiAccessConfirmButton")}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
 function bindCommonUi() {
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -1033,6 +1094,10 @@ function bindCommonUi() {
     });
   });
 
+  document.querySelectorAll("[data-action='kaspi-access']").forEach((link) => {
+    link.addEventListener("click", handleKaspiAccessClick);
+  });
+
   document.querySelectorAll("[data-action='fullscreen']").forEach((button) => {
     button.addEventListener("click", async () => {
       await toggleFullscreenMode();
@@ -1056,6 +1121,7 @@ function bindCommonUi() {
     backdrop.addEventListener("click", () => {
       closeAccountPanel();
       closeNotificationsPanel();
+      closeKaspiPurchaseModal();
     });
   }
 
@@ -1065,6 +1131,11 @@ function bindCommonUi() {
 
   document.querySelector("[data-action='logout']")?.addEventListener("click", async () => {
     await logout();
+  });
+
+  document.querySelector("[data-action='cancel-kaspi-access']")?.addEventListener("click", closeKaspiPurchaseModal);
+  document.querySelector("[data-action='confirm-kaspi-access']")?.addEventListener("click", async () => {
+    await confirmKaspiAccessPurchase();
   });
 
   document.querySelectorAll("[data-action='copy-card']").forEach((button) => {
@@ -1086,6 +1157,7 @@ function bindCommonUi() {
       closeLanguageMenus();
       closeAccountPanel();
       closeNotificationsPanel();
+      closeKaspiPurchaseModal();
       closeQrPanel();
     }
   });
@@ -1356,6 +1428,7 @@ async function handleSignup(event) {
             name,
             balance: 0,
             ticket_discount_percent: 0,
+            kaspi_unlocked: false,
             role: "User"
           }
         }
@@ -1380,6 +1453,7 @@ async function handleSignup(event) {
         password,
         balance: 0,
         ticket_discount_percent: 0,
+        kaspi_unlocked: false,
         role: "User"
       };
       users.push(newUser);
@@ -1406,14 +1480,30 @@ async function bootstrapSupabaseProfile(user, overrides = {}) {
 }
 
 async function fetchOwnProfileDirect() {
-  const { data, error } = await state.supabase
-    .from("profiles")
-    .select("name,email,balance,role,ticket_discount_percent")
-    .eq("id", state.user.id)
-    .maybeSingle();
+  try {
+    const { data, error } = await state.supabase
+      .from("profiles")
+      .select(PROFILE_SELECT_FIELDS)
+      .eq("id", state.user.id)
+      .maybeSingle();
 
-  if (error) throw error;
-  return data || null;
+    if (error) throw error;
+    return data || null;
+  } catch (error) {
+    const message = String(error?.message || error || "");
+    if (!message.includes("kaspi_unlocked")) {
+      throw error;
+    }
+
+    const { data, error: fallbackError } = await state.supabase
+      .from("profiles")
+      .select(PROFILE_SELECT_FIELDS_LEGACY)
+      .eq("id", state.user.id)
+      .maybeSingle();
+
+    if (fallbackError) throw fallbackError;
+    return data ? { ...data, kaspi_unlocked: isKaspiUnlocked(loadProfileCache()[state.user.id]) } : null;
+  }
 }
 
 async function fetchOwnTicketsDirect() {
@@ -1521,14 +1611,33 @@ async function buyTicketDirect(payload, ticketPrice) {
   }
 
   const nextBalance = Math.max(0, currentBalance - ticketPrice);
-  const { data: updatedProfile, error: profileError } = await state.supabase
-    .from("profiles")
-    .update({ balance: nextBalance })
-    .eq("id", state.user.id)
-    .select("name,email,balance,role,ticket_discount_percent")
-    .single();
+  let updatedProfile = null;
+  try {
+    const { data, error: profileError } = await state.supabase
+      .from("profiles")
+      .update({ balance: nextBalance })
+      .eq("id", state.user.id)
+      .select(PROFILE_SELECT_FIELDS)
+      .single();
 
-  if (profileError) throw profileError;
+    if (profileError) throw profileError;
+    updatedProfile = data;
+  } catch (error) {
+    const message = String(error?.message || error || "");
+    if (!message.includes("kaspi_unlocked")) {
+      throw error;
+    }
+
+    const { data, error: fallbackError } = await state.supabase
+      .from("profiles")
+      .update({ balance: nextBalance })
+      .eq("id", state.user.id)
+      .select(PROFILE_SELECT_FIELDS_LEGACY)
+      .single();
+
+    if (fallbackError) throw fallbackError;
+    updatedProfile = { ...data, kaspi_unlocked: isKaspiUnlocked() };
+  }
 
   return {
     ticket: insertedTicket,
@@ -1599,7 +1708,8 @@ async function handleTicketSubmit(event) {
           email: updatedProfile.email || state.profile.email,
           balance: getBalanceValue(updatedProfile.balance),
           role: String(updatedProfile.role || state.profile.role || "user").toLowerCase(),
-          ticket_discount_percent: getTicketDiscountPercent(updatedProfile)
+          ticket_discount_percent: getTicketDiscountPercent(updatedProfile),
+          kaspi_unlocked: isKaspiUnlocked(updatedProfile) || isKaspiUnlocked(state.profile)
         };
 
         const cache = loadProfileCache();
@@ -1609,7 +1719,8 @@ async function handleTicketSubmit(event) {
           email: state.profile.email,
           balance: state.profile.balance,
           role: state.profile.role,
-          ticket_discount_percent: state.profile.ticket_discount_percent
+          ticket_discount_percent: state.profile.ticket_discount_percent,
+          kaspi_unlocked: state.profile.kaspi_unlocked
         };
         localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
       }
@@ -1644,6 +1755,169 @@ async function handleTicketSubmit(event) {
     console.error(error);
     showToast(error.message || t("unknownError"));
   }
+}
+
+function handleKaspiAccessClick(event) {
+  event.preventDefault();
+
+  if (!state.user || state.profile.role === "guest") {
+    showToast(t("kaspiAccessRequiresAuth"));
+    navigateTo("signin.html");
+    return;
+  }
+
+  if (isKaspiUnlocked()) {
+    showToast(t("kaspiAccessAlreadyOwned"));
+    openKaspiSite();
+    return;
+  }
+
+  if (getBalanceValue(state.profile.balance) < KASPI_ACCESS_PRICE) {
+    showToast(t("kaspiAccessInsufficientBalance"));
+    return;
+  }
+
+  openKaspiPurchaseModal();
+}
+
+async function confirmKaspiAccessPurchase() {
+  const button = document.querySelector("[data-action='confirm-kaspi-access']");
+  if (button?.disabled) return;
+
+  if (!state.user || state.profile.role === "guest") {
+    closeKaspiPurchaseModal();
+    showToast(t("kaspiAccessRequiresAuth"));
+    navigateTo("signin.html");
+    return;
+  }
+
+  if (isKaspiUnlocked()) {
+    closeKaspiPurchaseModal();
+    showToast(t("kaspiAccessAlreadyOwned"));
+    openKaspiSite();
+    return;
+  }
+
+  if (getBalanceValue(state.profile.balance) < KASPI_ACCESS_PRICE) {
+    showToast(t("kaspiAccessInsufficientBalance"));
+    return;
+  }
+
+  if (button) button.disabled = true;
+
+  try {
+    if (state.supabaseMode && state.supabase) {
+      await purchaseKaspiAccessSupabase();
+      await refreshNotifications();
+    } else {
+      purchaseKaspiAccessLocal();
+      await addActivity({
+        title: t("activityKaspiTitle"),
+        body: t("activityKaspiText").replace("{price}", formatWalletAmount(KASPI_ACCESS_PRICE)),
+        type: "kaspi"
+      });
+    }
+
+    renderAccount();
+    renderWallet();
+    closeKaspiPurchaseModal();
+    showToast(t("kaspiAccessPurchased"));
+    openKaspiSite();
+  } catch (error) {
+    console.error(error);
+    showToast(error.message || t("unknownError"));
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+async function purchaseKaspiAccessSupabase() {
+  let result = null;
+
+  try {
+    const { data, error } = await state.supabase.rpc("purchase_kaspi_access");
+    if (error) throw error;
+    result = Array.isArray(data) ? data[0] : data;
+  } catch (rpcError) {
+    console.warn("purchase_kaspi_access rpc failed, trying direct fallback", rpcError);
+    result = await purchaseKaspiAccessDirect();
+  }
+
+  const updatedProfile = result?.profile || result;
+  applyProfileUpdate({
+    ...updatedProfile,
+    balance: updatedProfile?.balance ?? getBalanceValue(state.profile.balance) - KASPI_ACCESS_PRICE,
+    kaspi_unlocked: true
+  });
+}
+
+async function purchaseKaspiAccessDirect() {
+  const profileData = await fetchOwnProfileDirect();
+  const currentBalance = getBalanceValue(profileData?.balance);
+
+  if (isKaspiUnlocked(profileData)) {
+    return { profile: { ...profileData, kaspi_unlocked: true } };
+  }
+
+  if (currentBalance < KASPI_ACCESS_PRICE) {
+    throw new Error(t("kaspiAccessInsufficientBalance"));
+  }
+
+  const { data, error } = await state.supabase
+    .from("profiles")
+    .update({
+      balance: currentBalance - KASPI_ACCESS_PRICE,
+      kaspi_unlocked: true
+    })
+    .eq("id", state.user.id)
+    .select(PROFILE_SELECT_FIELDS)
+    .single();
+
+  if (error) throw error;
+
+  try {
+    await addOwnNotificationDirect({
+      title: t("activityKaspiTitle"),
+      body: t("activityKaspiText").replace("{price}", formatWalletAmount(KASPI_ACCESS_PRICE)),
+      type: "kaspi"
+    });
+  } catch (error) {
+    console.warn("kaspi notification skipped", error);
+  }
+
+  return { profile: data };
+}
+
+function purchaseKaspiAccessLocal() {
+  const nextBalance = getBalanceValue(state.profile.balance) - KASPI_ACCESS_PRICE;
+  const users = loadLocalUsers();
+  const userIndex = users.findIndex((user) => user.id === state.user.id);
+
+  if (userIndex >= 0) {
+    users[userIndex] = {
+      ...users[userIndex],
+      balance: nextBalance,
+      kaspi_unlocked: true
+    };
+    localStorage.setItem(STORAGE_KEYS.localUsers, JSON.stringify(users));
+    localStorage.setItem(STORAGE_KEYS.localSession, users[userIndex].id);
+    state.user = users[userIndex];
+    state.session = { user: users[userIndex] };
+  }
+
+  const localAccess = loadLocalKaspiAccess();
+  localAccess[getTicketOwnerKey()] = true;
+  localStorage.setItem(STORAGE_KEYS.localKaspiAccess, JSON.stringify(localAccess));
+
+  applyProfileUpdate({
+    ...state.profile,
+    balance: nextBalance,
+    kaspi_unlocked: true
+  });
+}
+
+function openKaspiSite() {
+  window.location.href = KASPI_ACCESS_URL;
 }
 
 function persistLocalFallbackTicket(ticket) {
@@ -1857,6 +2131,24 @@ function closeNotificationsPanel() {
   trigger.classList.remove("is-open");
 }
 
+function openKaspiPurchaseModal() {
+  const modal = document.getElementById("kaspiAccessModal");
+  const backdrop = document.getElementById("modalBackdrop");
+  if (!modal || !backdrop) return;
+  closeAccountPanel();
+  closeNotificationsPanel();
+  modal.hidden = false;
+  backdrop.hidden = false;
+}
+
+function closeKaspiPurchaseModal() {
+  const modal = document.getElementById("kaspiAccessModal");
+  const backdrop = document.getElementById("modalBackdrop");
+  if (!modal || !backdrop) return;
+  modal.hidden = true;
+  backdrop.hidden = true;
+}
+
 function toggleAccountPanel() {
   const accountPanel = document.getElementById("accountPanel");
   const backdrop = document.getElementById("modalBackdrop");
@@ -1910,6 +2202,40 @@ function renderWallet() {
   updateSendBalanceHint();
 }
 
+function isKaspiUnlocked(profile = state.profile) {
+  if (!profile) return false;
+  const userKey = state.user?.id;
+  const localAccess = userKey ? loadLocalKaspiAccess()[userKey] : false;
+  return Boolean(profile.kaspi_unlocked || profile.kaspiUnlocked || localAccess);
+}
+
+function applyProfileUpdate(profile) {
+  if (!profile) return;
+  state.profile = {
+    ...state.profile,
+    name: profile.name || state.profile.name,
+    email: profile.email || state.profile.email,
+    balance: getBalanceValue(profile.balance ?? state.profile.balance),
+    role: String(profile.role || state.profile.role || "user").toLowerCase(),
+    ticket_discount_percent: getTicketDiscountPercent(profile),
+    kaspi_unlocked: isKaspiUnlocked(profile) || Boolean(profile.kaspi_unlocked)
+  };
+
+  if (state.user?.id) {
+    const cache = loadProfileCache();
+    cache[state.user.id] = {
+      ...(cache[state.user.id] || {}),
+      name: state.profile.name,
+      email: state.profile.email,
+      balance: state.profile.balance,
+      role: state.profile.role,
+      ticket_discount_percent: state.profile.ticket_discount_percent,
+      kaspi_unlocked: state.profile.kaspi_unlocked
+    };
+    localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
+  }
+}
+
 function updateSendBalanceHint() {
   if (document.body.dataset.page !== "sendpay") return;
   const hint = document.getElementById("sendBalanceHint");
@@ -1939,7 +2265,8 @@ async function resolveProfile(user) {
           email: resolved.email || user.email,
           balance: resolved.balance ?? user.user_metadata?.balance ?? 0,
           role: String(resolved.role || "user").toLowerCase(),
-          ticket_discount_percent: getTicketDiscountPercent(resolved)
+          ticket_discount_percent: getTicketDiscountPercent(resolved),
+          kaspi_unlocked: isKaspiUnlocked(resolved)
         };
       }
     } catch (error) {
@@ -1953,7 +2280,8 @@ async function resolveProfile(user) {
       email: user.email || "-",
       balance: Number(user.user_metadata?.balance ?? user.balance ?? 0),
       role: user.user_metadata?.role?.toLowerCase?.() || user.role?.toLowerCase?.() || "user",
-      ticket_discount_percent: getTicketDiscountPercent(user.user_metadata || user)
+      ticket_discount_percent: getTicketDiscountPercent(user.user_metadata || user),
+      kaspi_unlocked: isKaspiUnlocked(user.user_metadata || user)
     };
   }
 
@@ -1969,7 +2297,8 @@ function guestProfile() {
     email: "-",
     balance: 0,
     role: "guest",
-    ticket_discount_percent: 0
+    ticket_discount_percent: 0,
+    kaspi_unlocked: false
   };
 }
 
@@ -1981,7 +2310,8 @@ function toProfile(user, isLocal = false) {
     email: user.email || "-",
     balance: Number(user.balance ?? user.user_metadata?.balance ?? 0),
     role: String(roleValue || "user").toLowerCase(),
-    ticket_discount_percent: getTicketDiscountPercent(isLocal ? user : (user.user_metadata || user))
+    ticket_discount_percent: getTicketDiscountPercent(isLocal ? user : (user.user_metadata || user)),
+    kaspi_unlocked: isKaspiUnlocked(isLocal ? user : (user.user_metadata || user))
   };
 }
 
@@ -3144,6 +3474,14 @@ function loadProfileCache() {
   }
 }
 
+function loadLocalKaspiAccess() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.localKaspiAccess) || "{}");
+  } catch {
+    return {};
+  }
+}
+
 function getTicketOwnerKey() {
   return state.user?.id || "guest";
 }
@@ -3203,14 +3541,33 @@ async function deductTicketBalance(amount) {
 
   if (state.supabaseMode && state.user?.id && state.supabase) {
     try {
-      const { data, error } = await state.supabase
-        .from("profiles")
-        .update({ balance: nextBalance })
-        .eq("id", state.user.id)
-        .select("name,email,balance,role,ticket_discount_percent")
-        .single();
+      let data = null;
+      try {
+        const response = await state.supabase
+          .from("profiles")
+          .update({ balance: nextBalance })
+          .eq("id", state.user.id)
+          .select(PROFILE_SELECT_FIELDS)
+          .single();
 
-      if (error) throw error;
+        if (response.error) throw response.error;
+        data = response.data;
+      } catch (error) {
+        const message = String(error?.message || error || "");
+        if (!message.includes("kaspi_unlocked")) {
+          throw error;
+        }
+
+        const response = await state.supabase
+          .from("profiles")
+          .update({ balance: nextBalance })
+          .eq("id", state.user.id)
+          .select(PROFILE_SELECT_FIELDS_LEGACY)
+          .single();
+
+        if (response.error) throw response.error;
+        data = { ...response.data, kaspi_unlocked: isKaspiUnlocked() };
+      }
 
       state.profile = {
         ...state.profile,
@@ -3218,7 +3575,8 @@ async function deductTicketBalance(amount) {
         email: data?.email || state.profile.email,
         balance: getBalanceValue(data?.balance ?? nextBalance),
         role: String(data?.role || state.profile.role || "user").toLowerCase(),
-        ticket_discount_percent: getTicketDiscountPercent(data || state.profile)
+        ticket_discount_percent: getTicketDiscountPercent(data || state.profile),
+        kaspi_unlocked: isKaspiUnlocked(data) || isKaspiUnlocked(state.profile)
       };
 
       const cache = loadProfileCache();
@@ -3228,7 +3586,8 @@ async function deductTicketBalance(amount) {
         email: state.profile.email,
         balance: state.profile.balance,
         role: state.profile.role,
-        ticket_discount_percent: state.profile.ticket_discount_percent
+        ticket_discount_percent: state.profile.ticket_discount_percent,
+        kaspi_unlocked: state.profile.kaspi_unlocked
       };
       localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
       return true;
@@ -3251,7 +3610,8 @@ async function deductTicketBalance(amount) {
 
   state.profile = {
     ...state.profile,
-    balance: nextBalance
+    balance: nextBalance,
+    kaspi_unlocked: isKaspiUnlocked()
   };
 
   if (state.user?.id) {
@@ -3262,7 +3622,8 @@ async function deductTicketBalance(amount) {
       email: state.profile.email,
       balance: state.profile.balance,
       role: state.profile.role,
-      ticket_discount_percent: state.profile.ticket_discount_percent
+      ticket_discount_percent: state.profile.ticket_discount_percent,
+      kaspi_unlocked: state.profile.kaspi_unlocked
     };
     localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
   }
