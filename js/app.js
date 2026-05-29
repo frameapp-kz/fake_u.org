@@ -7,6 +7,7 @@ const TRANSLATIONS = {
     signInPageTitle: "Кіру",
     signUpPageTitle: "Тіркелу",
     adminPageTitle: "Баланс басқару",
+    profilePageTitle: "Профиль",
     myTicketsPageTitle: "Менің билеттерім",
     historyPageTitle: "Билеттер тарихы",
     plusPageTitle: "Қосымша бөлім",
@@ -63,6 +64,11 @@ const TRANSLATIONS = {
     signUpTab: "Тіркелу",
     signInTab: "Кіру",
     logoutButton: "Шығу",
+    profileHeading: "Профиль",
+    editNameLabel: "Есімді өзгерту",
+    saveNameButton: "Сақтау",
+    statsTicketsLabel: "Сатып алынған билеттер",
+    profileUpdatedToast: "Профиль сәтті жаңартылды",
     myTicketsButton: "Менің билеттерім",
     fullscreenButton: "Full Screen",
     exitFullscreenButton: "Шығу",
@@ -228,6 +234,7 @@ const TRANSLATIONS = {
     signInPageTitle: "Вход",
     signUpPageTitle: "Регистрация",
     adminPageTitle: "Управление балансом",
+    profilePageTitle: "Профиль",
     myTicketsPageTitle: "Мои билеты",
     historyPageTitle: "История билетов",
     plusPageTitle: "Дополнительно",
@@ -284,6 +291,11 @@ const TRANSLATIONS = {
     signUpTab: "Регистрация",
     signInTab: "Вход",
     logoutButton: "Выйти",
+    profileHeading: "Профиль",
+    editNameLabel: "Изменить имя",
+    saveNameButton: "Сохранить",
+    statsTicketsLabel: "Куплено билетов",
+    profileUpdatedToast: "Профиль успешно обновлен",
     myTicketsButton: "Мои билеты",
     fullscreenButton: "Full Screen",
     exitFullscreenButton: "Выйти",
@@ -447,6 +459,7 @@ TRANSLATIONS.en = {
   ...TRANSLATIONS.ru,
   siteHomeTitle: "FAKE U",
   onayPageTitle: "Buy Ticket",
+  profilePageTitle: "Profile",
   signInPageTitle: "Sign In",
   signUpPageTitle: "Sign Up",
   kaspiAccessModalTitle: "Buy Kaspi Access",
@@ -501,6 +514,11 @@ TRANSLATIONS.en = {
   signUpTab: "Sign Up",
   signInTab: "Sign In",
   logoutButton: "Log Out",
+  profileHeading: "Profile",
+  editNameLabel: "Change Name",
+  saveNameButton: "Save",
+  statsTicketsLabel: "Tickets Purchased",
+  profileUpdatedToast: "Profile updated successfully",
   myTicketsButton: "My Tickets",
   exitFullscreenButton: "Exit",
   fullscreenHint: "This mode hides extra browser panels. The system status bar may still stay visible depending on the device.",
@@ -897,6 +915,7 @@ async function init() {
   renderAccount();
   renderWallet();
   renderNotifications();
+  renderProfilePage();
 }
 
 function initSupabase() {
@@ -1215,6 +1234,7 @@ async function handleSessionChange(session) {
 function bindPageSpecificUi() {
   document.getElementById("signinForm")?.addEventListener("submit", handleSignin);
   document.getElementById("signupForm")?.addEventListener("submit", handleSignup);
+  document.getElementById("profileUpdateForm")?.addEventListener("submit", handleProfileUpdate);
   document.getElementById("ticketForm")?.addEventListener("submit", handleTicketSubmit);
   document.getElementById("adminLookupForm")?.addEventListener("submit", handleAdminLookupSubmit);
   document.getElementById("adminBalanceForm")?.addEventListener("submit", handleAdminBalanceSubmit);
@@ -1477,6 +1497,72 @@ async function handleSignup(event) {
 async function bootstrapSupabaseProfile(user, overrides = {}) {
   if (!state.supabaseMode || !state.supabase || !user?.id) return null;
   return null;
+}
+
+function renderProfilePage() {
+  if (document.body.dataset.page !== "profile") return;
+
+  const profileNameInput = document.getElementById("profileName");
+  const statsTicketsCount = document.getElementById("statsTicketsCount");
+
+  if (profileNameInput) {
+    profileNameInput.value = state.profile.name || "";
+  }
+
+  if (statsTicketsCount) {
+    statsTicketsCount.textContent = state.tickets.length;
+  }
+
+  renderAccount();
+  renderWallet();
+}
+
+async function handleProfileUpdate(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const newName = String(formData.get("name") || "").trim();
+
+  if (!newName) {
+    showToast(t("fillRequired"));
+    return;
+  }
+
+  try {
+    if (state.supabaseMode && state.user) {
+      const { error } = await state.supabase
+        .from("profiles")
+        .update({ name: newName })
+        .eq("id", state.user.id);
+
+      if (error) throw error;
+    } else if (state.user) {
+      const users = loadLocalUsers();
+      const userIndex = users.findIndex((user) => user.id === state.user.id);
+      if (userIndex >= 0) {
+        users[userIndex].name = newName;
+        localStorage.setItem(STORAGE_KEYS.localUsers, JSON.stringify(users));
+        state.user = users[userIndex];
+      }
+    }
+
+    state.profile.name = newName;
+
+    // Update cache
+    if (state.user?.id) {
+        const cache = loadProfileCache();
+        if (cache[state.user.id]) {
+            cache[state.user.id].name = newName;
+            localStorage.setItem(STORAGE_KEYS.profileCache, JSON.stringify(cache));
+        }
+    }
+
+    renderAccount();
+    renderProfilePage();
+    showToast(t("profileUpdatedToast"));
+  } catch (error) {
+    console.error(error);
+    showToast(error.message || t("unknownError"));
+  }
 }
 
 async function fetchOwnProfileDirect() {
